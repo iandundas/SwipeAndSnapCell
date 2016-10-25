@@ -18,14 +18,14 @@ extension UIView{
 }
 
 extension UIView{
-    func constrainToEdgesOf(otherView: UIView){
+    func constrainToEdgesOf(otherView: UIView, withMargin margin: CGFloat = 0){
         translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            leftAnchor.constraint(equalTo: otherView.leftAnchor),
-            rightAnchor.constraint(equalTo: otherView.rightAnchor),
-            topAnchor.constraint(equalTo: otherView.topAnchor),
-            bottomAnchor.constraint(equalTo: otherView.bottomAnchor),
+            leftAnchor.constraint(equalTo: otherView.leftAnchor, constant: margin),
+            rightAnchor.constraint(equalTo: otherView.rightAnchor, constant: margin),
+            topAnchor.constraint(equalTo: otherView.topAnchor, constant: margin),
+            bottomAnchor.constraint(equalTo: otherView.bottomAnchor, constant: margin),
             ])
     }
 }
