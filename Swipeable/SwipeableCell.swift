@@ -149,24 +149,27 @@ class SwipeableCell: UITableViewCell{
 
 extension SwipeableCell: UIScrollViewDelegate{
     
+    private func mutate(layoutConstraint: NSLayoutConstraint, constant: CGFloat, withAnimation: Bool){
+        let mutation = {
+            layoutConstraint.constant = constant
+            self.layoutIfNeeded()
+        }
+        if withAnimation{
+            UIView.animate(withDuration: SwipeableCell.SnapAnimationDuration, delay: 0, options: .curveEaseInOut,
+                           animations: mutation, completion: nil)
+        }
+        else{
+            mutation()
+        }
+    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         scrollViewDirection = scrollView.scrollDirection(previousContentOffset: lastContentOffset)
         lastContentOffset = scrollView.contentOffset.x
         
         if isBeyondSnapPoint {
-            let mutation = {
-                self.boxRightConstraint.constant = self.calibratedX
-                self.layoutIfNeeded()
-            }
-            
-            if !hasSnappedOut{
-                hasSnappedOut = true
-                UIView.animate(withDuration: SwipeableCell.SnapAnimationDuration, delay: 0, options: .curveEaseInOut,
-                               animations: mutation, completion: nil)
-            }
-            else{
-                mutation()
-            }
+            mutate(layoutConstraint: leftButtonContainerRightConstraint, constant: calibratedX, withAnimation: !hasSnappedOut)
+            hasSnappedOut = true
         }
         else{
             
@@ -180,20 +183,8 @@ extension SwipeableCell: UIScrollViewDelegate{
             
             let totalOffset = primaryOffset + dampedOffset
             
-            let mutation = {
-                self.boxRightConstraint.constant = totalOffset
-                self.layoutIfNeeded()
-            }
-            
-            if hasSnappedOut{
-                hasSnappedOut = false
-                UIView.animate(withDuration: SwipeableCell.SnapAnimationDuration, delay: 0, options: .curveEaseInOut,
-                               animations: mutation, completion: nil)
-            }
-            else{
-                mutation()
-            }
-            
+            mutate(layoutConstraint: leftButtonContainerRightConstraint, constant: totalOffset, withAnimation: hasSnappedOut)
+            hasSnappedOut = false
         }
     }
     
