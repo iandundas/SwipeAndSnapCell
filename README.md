@@ -9,3 +9,7 @@ It now also supports swiping from the right as well.
 <img src="https://www.dropbox.com/s/4hx9rgjon0wfevi/swipeable%20example.gif?dl=1i" />
 
 I hope it's useful to somebody, I'll be using it in v2.0 of [Tacks](http://www.tacks.cc).
+
+Future: 
+
+- Swipe from right as well 🙄
