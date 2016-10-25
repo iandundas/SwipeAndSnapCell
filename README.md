@@ -6,10 +6,11 @@ It now also supports swiping from the right as well.
 (Swift 3.0)
 
 ## gif:
-<img src="https://www.dropbox.com/s/4hx9rgjon0wfevi/swipeable%20example.gif?dl=1i" />
+<img src="https://www.dropbox.com/s/vetnxf14wukrhf5/swipeable%20cell%202.gif?dl=1" />
 
 I hope it's useful to somebody, I'll be using it in v2.0 of [Tacks](http://www.tacks.cc).
 
-Future: 
+Future:
 
-- Swipe from right as well 🙄
+- support device rotation
+- allow swiping on the button
