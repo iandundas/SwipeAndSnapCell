@@ -9,8 +9,12 @@
 import UIKit
 
 class TableViewDataSource: NSObject, UITableViewDataSource{
+    
+    var swipedCallback: ((IndexPath)->())? = nil
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: SwipeableCell.id) as! SwipeableCell
+        cell.swipeableContentView.backgroundColor = UIColor(red:0.65, green:0.78, blue:0.90, alpha:1.00)
         
         // Not the best but will do for now:
         cell.swipeableContentView.subviews.forEach { (view) in
@@ -18,12 +22,14 @@ class TableViewDataSource: NSObject, UITableViewDataSource{
         }
         
         let label = UILabel()
+        label.font = UIFont(name: "Helvetica", size: 20)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.text = "Cool"
+        label.text = "😊"
         
-        cell.successCallback = { [unowned label] in
-            label.text = "DROOL"
+        cell.successCallback = { [weak self, unowned label] in
+            self?.swipedCallback?(indexPath)
+            label.text = "😇"
         }
         
         cell.swipeableContentView.addSubview(label)
@@ -60,6 +66,12 @@ class ViewController: UITableViewController {
         tableView.register(SwipeableCell.self, forCellReuseIdentifier: SwipeableCell.id)
         tableView.dataSource = tableViewDataSource
         tableView.delegate = tableViewDelegate
+        
+        tableViewDataSource.swipedCallback = { [weak self] indexPath in
+            let alert = UIAlertController(title: "Activated!", message: "IndexPath: {\(indexPath.section), \(indexPath.row)}", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "ok", style: .default, handler: nil))
+            self?.present(alert, animated: true, completion: nil)
+        }
     }
 }
 
