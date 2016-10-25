@@ -174,13 +174,13 @@ extension SwipeableCell: UIScrollViewDelegate{
         else{
             
             let primaryOffset = min(calibratedX, SwipeableCell.BoxWidth)
-            var dampedOffset: CGFloat = 0
-            
-            if calibratedX > SwipeableCell.BoxWidth {
-                let remaining = calibratedX - SwipeableCell.BoxWidth
-                dampedOffset = remaining * SwipeableCell.DampingAmount
-            }
-            
+            let dampedOffset: CGFloat = {
+                if calibratedX > SwipeableCell.BoxWidth {
+                    let remaining = calibratedX - SwipeableCell.BoxWidth
+                    return remaining * SwipeableCell.DampingAmount
+                }
+                return 0
+            }()
             let totalOffset = primaryOffset + dampedOffset
             
             mutate(layoutConstraint: leftButtonContainerRightConstraint, constant: totalOffset, withAnimation: hasSnappedOut)
