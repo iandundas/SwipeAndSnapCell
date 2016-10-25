@@ -31,13 +31,13 @@ extension UIView{
 }
 
 extension UIScrollView{
-    enum Direction{
+    enum TravelDirection{
         case none
         case left
         case right
     }
     
-    func scrollDirection(previousContentOffset: CGFloat) -> Direction{
+    func scrollDirection(previousContentOffset: CGFloat) -> TravelDirection{
         if (previousContentOffset > contentOffset.x){
             return .right
         }
