@@ -10,7 +10,7 @@ import UIKit
 
 class TableViewDataSource: NSObject, UITableViewDataSource{
     
-    var swipedCallback: ((IndexPath)->())? = nil
+    var swipedCallback: ((IndexPath, SwipeableCell.SwipeSide)->())? = nil
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: SwipeableCell.id) as! SwipeableCell
@@ -27,8 +27,8 @@ class TableViewDataSource: NSObject, UITableViewDataSource{
         label.textAlignment = .center
         label.text = "😊"
         
-        cell.successCallback = { [weak self, unowned label] in
-            self?.swipedCallback?(indexPath)
+        cell.successCallback = { [weak self, unowned label] side in
+            self?.swipedCallback?(indexPath, side)
             label.text = "😇"
         }
         
@@ -67,8 +67,8 @@ class ViewController: UITableViewController {
         tableView.dataSource = tableViewDataSource
         tableView.delegate = tableViewDelegate
         
-        tableViewDataSource.swipedCallback = { [weak self] indexPath in
-            let alert = UIAlertController(title: "Activated!", message: "IndexPath: {\(indexPath.section), \(indexPath.row)}", preferredStyle: .alert)
+        tableViewDataSource.swipedCallback = { [weak self] indexPath, side in
+            let alert = UIAlertController(title: "Activated!", message: "IndexPath: {\(indexPath.section), \(indexPath.row)}, side: \(side)", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "ok", style: .default, handler: nil))
             self?.present(alert, animated: true, completion: nil)
         }

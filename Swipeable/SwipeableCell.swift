@@ -14,6 +14,14 @@ class SwipeableCell: UITableViewCell{
         case none
         case left
         case right
+        
+        var description: String{
+            switch self{
+            case .none: return "centered"
+            case .left: return "left"
+            case .right: return "right"
+            }
+        }
     }
     
     // MARK: Constants
@@ -71,16 +79,19 @@ class SwipeableCell: UITableViewCell{
     
     // MARK: Event or Button taps
     
-    var successCallback: (()->())? = {
-        print("Success!")
+    var successCallback: ((SwipeSide)->())? = { side in
+        print("Swiped on side: \(side)")
     }
     
-    func didSwipePastSnapPoint(){
-        successCallback?()
+    func didSwipePastSnapPoint(side: SwipeSide){
+        successCallback?(side)
     }
     
-    func didTapButton(){
-        successCallback?()
+    func didTapLeftButton(){
+        successCallback?(activeSide)
+    }
+    func didTapRightButton(){
+        successCallback?(activeSide)
     }
     
     
@@ -135,7 +146,7 @@ class SwipeableCell: UITableViewCell{
         leftButtonContainerRightConstraint.isActive = true
         
         // left button setup:
-        leftButton.addTarget(self, action: #selector(SwipeableCell.didTapButton), for: .touchUpInside)
+        leftButton.addTarget(self, action: #selector(SwipeableCell.didTapLeftButton), for: .touchUpInside)
         leftButtonContainer.addSubview(leftButton)
         
         leftButton.constrainToEdgesOf(otherView: leftButtonContainer)
@@ -155,12 +166,11 @@ class SwipeableCell: UITableViewCell{
         rightButtonContainerLeftConstraint = rightButtonContainer.leftAnchor.constraint(equalTo: scrollView.rightAnchor, constant: 0)
         rightButtonContainerLeftConstraint.isActive = true
         
+        // right button setup:
+        rightButton.addTarget(self, action: #selector(SwipeableCell.didTapRightButton), for: .touchUpInside)
+        rightButtonContainer.addSubview(rightButton)
         
-//        // left button setup:
-//        rightButton.addTarget(self, action: #selector(SwipeableCell.didTapButton), for: .touchUpInside)
-//        rightButtonContainer.addSubview(leftButton)
-//        
-//        leftButton.constrainToEdgesOf(otherView: leftButtonContainer)
+        rightButton.constrainToEdgesOf(otherView: rightButtonContainer)
         
         setNeedsLayout()
         layoutSubviews()
@@ -262,7 +272,6 @@ extension SwipeableCell: UIScrollViewDelegate{
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate: Bool){
         if calibratedX < SwipeableCell.BoxWidth{
-            print("direction: \(scrollViewDirection), side:\(activeSide)")
             switch (activeSide, scrollViewDirection) {
                 case (.left, .right):
                     DispatchQueue.main.async {
@@ -282,7 +291,7 @@ extension SwipeableCell: UIScrollViewDelegate{
         }
         else if isBeyondSnapPoint {
             DispatchQueue.main.async {
-                self.didSwipePastSnapPoint()
+                self.didSwipePastSnapPoint(side: self.activeSide)
                 self.scrollView.setContentOffset(self.restingContentOffset, animated: true)
             }
         }
