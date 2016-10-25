@@ -196,6 +196,15 @@ class SwipeableCell: UITableViewCell{
     }
     fileprivate var lastContentOffset: CGFloat = 0
     fileprivate var hasSnappedOut: Bool = false
+    
+    fileprivate func constraintForSide(side: SwipeSide) -> NSLayoutConstraint?{
+        guard activeSide != .none else {return nil}
+        return activeSide == .left ? leftButtonContainerRightConstraint : rightButtonContainerLeftConstraint
+    }
+    fileprivate func constraintForOtherSideOf(side: SwipeSide) -> NSLayoutConstraint?{
+        guard activeSide != .none else {return nil}
+        return activeSide == .left ? rightButtonContainerLeftConstraint : leftButtonContainerRightConstraint
+    }
 }
 
 
@@ -216,16 +225,22 @@ extension SwipeableCell: UIScrollViewDelegate{
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("Scrollview offset: \(scrollView.contentOffset.x)")
         scrollViewDirection = scrollView.scrollDirection(previousContentOffset: lastContentOffset)
         lastContentOffset = scrollView.contentOffset.x
         
-        guard activeSide != .none else {return}
-        let constraint: NSLayoutConstraint = activeSide == .left ? leftButtonContainerRightConstraint : rightButtonContainerLeftConstraint
+        guard let constraint = constraintForSide(side: activeSide), let otherConstraint = constraintForOtherSideOf(side: activeSide) else {
+            // The last pass fires when contentOffset back to normal, but we haven't fully applied it to the buttons yet. Do it here:
+            self.leftButtonContainerRightConstraint.constant = 0
+            self.rightButtonContainerLeftConstraint.constant = 0
+            self.layoutIfNeeded()
+            return
+        }
+        
         let inverter: CGFloat = activeSide == .left ? 1 : -1
         
         if isBeyondSnapPoint {
             mutate(layoutConstraint: constraint, constant: calibratedX * inverter, withAnimation: !hasSnappedOut)
+            mutate(layoutConstraint: otherConstraint, constant: 0, withAnimation: false)
             hasSnappedOut = true
         }
         else{
@@ -240,6 +255,7 @@ extension SwipeableCell: UIScrollViewDelegate{
             let totalOffset = primaryOffset + dampedOffset
             
             mutate(layoutConstraint: constraint, constant: totalOffset * inverter, withAnimation: hasSnappedOut)
+            mutate(layoutConstraint: otherConstraint, constant: 0, withAnimation: false)
             hasSnappedOut = false
         }
     }
@@ -262,7 +278,6 @@ extension SwipeableCell: UIScrollViewDelegate{
                     DispatchQueue.main.async {
                         scrollView.setContentOffset(self.restingContentOffset, animated: true)
                     }
-                
             }
         }
         else if isBeyondSnapPoint {
