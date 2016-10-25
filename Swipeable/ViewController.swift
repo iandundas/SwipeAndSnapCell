@@ -8,11 +8,9 @@
 
 import UIKit
 
-
 class TableViewDataSource: NSObject, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Cell.id) as! Cell
-        //        cell.textLabel?.text = "Working"
         return cell
     }
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -42,7 +40,7 @@ extension UIView{
 }
 
 extension UIView{
-    func constraintToEdgesOf(otherView: UIView){
+    func constrainToEdgesOf(otherView: UIView){
         translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -54,18 +52,39 @@ extension UIView{
     }
 }
 
-enum ScrollViewDirection{
-    case none
-    case left
-    case right
+
+
+extension UIScrollView{
+    enum Direction{
+        case none
+        case left
+        case right
+    }
+    
+    func scrollDirection(previousContentOffset: CGFloat) -> Direction{
+        if (previousContentOffset > contentOffset.x){
+            return .right
+        }
+        else if (previousContentOffset < contentOffset.x){
+            return .left
+        }
+        else{
+            return .none
+        }
+    }
 }
 
 class Cell: UITableViewCell{
+    
+    // MARK: Constants
+    
     static let id: String = "Cell"
     static let BoxWidth: CGFloat = 75
     static let DampingAmount: CGFloat = 0.15
     static let SnapAtPercentage: CGFloat = 0.44
     static let SnapAnimationDuration: TimeInterval = 0.4
+    
+    // MARK: Views
     
     let scrollView: UIScrollView = {
         $0.backgroundColor = UIColor(red:0.16, green:0.58, blue:0.87, alpha:1.00)
@@ -73,77 +92,99 @@ class Cell: UITableViewCell{
         return $0
     }(UIScrollView())
     
-    // Views:
-    let betterContentView = UIView()
-    let leftBox = UIView()
+    let swipeableContentView: UIView = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.backgroundColor = UIColor.white
+        return $0
+    }(UIView())
     
-    // Constraints:
+    let leftButtonContainer: UIView = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.backgroundColor = UIColor.purple
+        return $0
+    }(UIView())
+    
+    let leftButton: UIButton = {
+        $0.backgroundColor = UIColor.red
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        return $0
+    }(UIButton(type: .custom))
+    
+    // MARK: Constraints
+    
     var boxRightConstraint: NSLayoutConstraint! = nil
     
-    required init?(coder aDecoder: NSCoder){ super.init(coder: aDecoder)}
-    override required init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        contentView.removeFromSuperview()
+    // MARK: Event or Button taps
+    
+    var successCallback: (()->())? = {
+        print("Success!")
     }
     
+    func didSwipePastSnapPoint(){
+        successCallback?()
+    }
     
-    private var hasLaidOutFirstTime = false
+    func didTapButton(){
+        successCallback?()
+    }
+    
+    // MARK: Drawing Subviews
+    
+    private var hasSetupSubviews = false
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-        // whatever
         
-        guard hasLaidOutFirstTime == false else {return}
-        hasLaidOutFirstTime = true
+        if !hasSetupSubviews{
+            hasSetupSubviews = true
+            setupSubviews()
+        }
+    }
+    
+    private func setupSubviews(){
+        contentView.removeFromSuperview() // pah
         
-        // ScrollView setup:
+        // scrollView setup:
         addSubview(scrollView)
         scrollView.delegate = self
-        scrollView.constraintToEdgesOf(otherView: self)
+        scrollView.constrainToEdgesOf(otherView: self)
         
         setNeedsLayout()
         layoutSubviews()
         
-        // betterContentView setup:
-        scrollView.addSubview(betterContentView)
-        betterContentView.translatesAutoresizingMaskIntoConstraints = false
-        betterContentView.backgroundColor = UIColor.white
+        
+        // swipeableContentView setup:
+        scrollView.addSubview(swipeableContentView)
         
         NSLayoutConstraint.activate([
-            betterContentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            betterContentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
-            betterContentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            betterContentView.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: Cell.BoxWidth)
-            
+            swipeableContentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            swipeableContentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
+            swipeableContentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            swipeableContentView.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: Cell.BoxWidth)
             ])
         
         
-        // leftBox setup:
-        addSubview(leftBox)
-        leftBox.translatesAutoresizingMaskIntoConstraints = false
-        leftBox.backgroundColor = UIColor.purple
+        // leftButtonContainer setup:
+        addSubview(leftButtonContainer)
         
         NSLayoutConstraint.activate([
-            leftBox.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
-            leftBox.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            leftButtonContainer.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
+            leftButtonContainer.topAnchor.constraint(equalTo: scrollView.topAnchor),
             
-            leftBox.widthAnchor.constraint(greaterThanOrEqualToConstant: Cell.BoxWidth),
-            leftBox.leftAnchor.constraint(lessThanOrEqualTo: scrollView.leftAnchor),
+            leftButtonContainer.widthAnchor.constraint(greaterThanOrEqualToConstant: Cell.BoxWidth),
+            leftButtonContainer.leftAnchor.constraint(lessThanOrEqualTo: scrollView.leftAnchor),
             ])
         
-        boxRightConstraint = leftBox.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 0)
+        boxRightConstraint = leftButtonContainer.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 0)
         boxRightConstraint.isActive = true
         
         
-        // add button into the box:
-        let button = UIButton(type: .custom)
-        button.backgroundColor = UIColor.red
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: Selector("didTapButton"), for: .touchUpInside)
-        leftBox.addSubview(button)
+        // button setup:
+        leftButton.addTarget(self, action: #selector(Cell.didTapButton), for: .touchUpInside)
+        leftButtonContainer.addSubview(leftButton)
         
-        button.constraintToEdgesOf(otherView: leftBox)
-  
+        leftButton.constrainToEdgesOf(otherView: leftButtonContainer)
+        
         setNeedsLayout()
         layoutSubviews()
         
@@ -152,84 +193,69 @@ class Cell: UITableViewCell{
     }
     
     
-    var restingContentOffset: CGPoint{
+    fileprivate var restingContentOffset: CGPoint{
         return CGPoint(x: Cell.BoxWidth, y: 0)
     }
-    var calibratedX: CGFloat{
+    fileprivate var calibratedX: CGFloat{
         return -1 * (scrollView.contentOffset.x - restingContentOffset.x)
     }
-    var isBeyondSnapPoint: Bool{
-        let result = calibratedX >= (bounds.width * Cell.SnapAtPercentage)
-        print("Is beyond: \(result): \(calibratedX) >= \(bounds.width * Cell.SnapAtPercentage)")
-        return result
+    fileprivate var isBeyondSnapPoint: Bool{
+        return calibratedX >= (bounds.width * Cell.SnapAtPercentage)
     }
     
-    var scrollViewDirection: ScrollViewDirection = .none
+    fileprivate var scrollViewDirection: UIScrollView.Direction = .none
     fileprivate var lastContentOffset: CGFloat = 0
-    
     fileprivate var hasSnappedOut: Bool = false
-    
-    
-    var selectedDev = false
-    
-    func didTapButton(){
-        print("TAP")
-    }
 }
 
 
 extension Cell: UIScrollViewDelegate{
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scrollViewDirection = scrollView.scrollDirection(previousContentOffset: lastContentOffset)
+        lastContentOffset = scrollView.contentOffset.x
         
-        if (lastContentOffset > scrollView.contentOffset.x){
-            scrollViewDirection = .right
-        }
-        else if (lastContentOffset < scrollView.contentOffset.x){
-            scrollViewDirection = .left
+        if isBeyondSnapPoint {
+            let mutation = {
+                self.boxRightConstraint.constant = self.calibratedX
+                self.layoutIfNeeded()
+            }
+            
+            if !hasSnappedOut{
+                hasSnappedOut = true
+                UIView.animate(withDuration: Cell.SnapAnimationDuration, delay: 0, options: .curveEaseInOut,
+                               animations: mutation, completion: nil)
+            }
+            else{
+                mutation()
+            }
         }
         else{
-            scrollViewDirection = .none
-        }
-        
-        self.lastContentOffset = scrollView.contentOffset.x;
-        
-        
-        if !isBeyondSnapPoint {
+            
             let primaryOffset = min(calibratedX, Cell.BoxWidth)
             var dampedOffset: CGFloat = 0
             
             if calibratedX > Cell.BoxWidth {
-                // e.g. 150
-                let remaining = calibratedX - Cell.BoxWidth // 50
+                let remaining = calibratedX - Cell.BoxWidth
                 dampedOffset = remaining * Cell.DampingAmount
             }
             
             let totalOffset = primaryOffset + dampedOffset
             
-            if hasSnappedOut{
-                hasSnappedOut = false
-                UIView.animate(withDuration: Cell.SnapAnimationDuration, delay: 0, options: .curveEaseInOut, animations: {
-                    self.boxRightConstraint.constant = totalOffset
-                    self.layoutIfNeeded()
-                }, completion: {_ in })
-            }
-            else{
+            let mutation = {
                 self.boxRightConstraint.constant = totalOffset
                 self.layoutIfNeeded()
             }
-        }
-        else{
-            if !hasSnappedOut{
-                hasSnappedOut = true
-                UIView.animate(withDuration: Cell.SnapAnimationDuration, delay: 0, options: .curveEaseInOut, animations: {
-                    self.boxRightConstraint.constant = self.calibratedX
-                    self.layoutIfNeeded()
-                }, completion: { _ in})
+            
+            if hasSnappedOut{
+                hasSnappedOut = false
+                UIView.animate(withDuration: Cell.SnapAnimationDuration, delay: 0, options: .curveEaseInOut,
+                               animations: mutation, completion: nil)
             }
             else{
-                self.boxRightConstraint.constant = self.calibratedX
-                self.layoutIfNeeded()
+                mutation()
             }
+
         }
     }
     
@@ -237,23 +263,20 @@ extension Cell: UIScrollViewDelegate{
         if calibratedX < Cell.BoxWidth{
             switch scrollViewDirection{
             case .right:
-                scrollView.setContentOffset(CGPoint(x: Cell.BoxWidth, y: 0), animated: true)
+                DispatchQueue.main.async {
+                    scrollView.setContentOffset(CGPoint(x: Cell.BoxWidth, y: 0), animated: true)
+                }
             default:
-                scrollView.setContentOffset(restingContentOffset, animated: true)
+                DispatchQueue.main.async {
+                    scrollView.setContentOffset(self.restingContentOffset, animated: true)
+                }
             }
         }
         else if isBeyondSnapPoint {
-            if selectedDev {
-                betterContentView.backgroundColor = UIColor.white
-            }
-            else{
-                betterContentView.backgroundColor = UIColor.red
-            }
-            
             DispatchQueue.main.async {
+                self.didSwipePastSnapPoint()
                 self.scrollView.setContentOffset(self.restingContentOffset, animated: true)
             }
-            selectedDev = !selectedDev
         }
     }
 }
