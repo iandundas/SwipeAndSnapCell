@@ -37,10 +37,10 @@ class CellHostedView: UIView {
 
 class TableViewDataSource: NSObject, UITableViewDataSource{
     
-    var swipedCallback: ((IndexPath, SwipeableCell.SwipeSide)->())? = nil
+    var swipedCallback: ((IndexPath, SwipeAndSnapCell.SwipeSide)->())? = nil
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CellID) as! SwipeableCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellID) as! SwipeAndSnapCell
         
         if cell.hostedView == nil{
             let hostedView = CellHostedView()
@@ -103,7 +103,7 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         title = "Swipe and Snap"
         
-        tableView.register(SwipeableCell.self, forCellReuseIdentifier: CellID)
+        tableView.register(SwipeAndSnapCell.self, forCellReuseIdentifier: CellID)
         tableView.dataSource = tableViewDataSource
         tableView.delegate = tableViewDelegate
         
