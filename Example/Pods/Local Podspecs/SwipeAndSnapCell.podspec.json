@@ -1,0 +1,22 @@
+{
+  "name": "SwipeAndSnapCell",
+  "version": "0.1.0",
+  "summary": "A short description of SwipeAndSnapCell.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/<GITHUB_USERNAME>/SwipeAndSnapCell",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "Ian Dundas": "contact@iandundas.co.uk"
+  },
+  "source": {
+    "git": "https://github.com/<GITHUB_USERNAME>/SwipeAndSnapCell.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "9.0"
+  },
+  "source_files": "SwipeAndSnapCell/Classes/**/*"
+}

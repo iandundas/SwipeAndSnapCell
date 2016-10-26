@@ -1,0 +1,6 @@
+framework module Pods_SwipeAndSnapCell_Tests {
+  umbrella header "Pods-SwipeAndSnapCell_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,6 @@
+framework module SwipeAndSnapCell {
+  umbrella header "SwipeAndSnapCell-umbrella.h"
+
+  export *
+  module * { export * }
+}
