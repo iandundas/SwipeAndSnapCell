@@ -20,7 +20,7 @@ class CellHostedView: UIView {
         
         super.init(frame: frame)
         
-        label.backgroundColor = UIColor(red:0.65, green:0.78, blue:0.90, alpha:1.00)
+        label.backgroundColor = generateRandomPastelColor(withMixedColor: nil)
         label.font = UIFont(name: "Helvetica", size: 20)
         label.textAlignment = .center
         label.text = "😊"
@@ -52,7 +52,7 @@ class TableViewDataSource: NSObject, UITableViewDataSource{
             
             cell.didActivateCallback = { [weak self, unowned hostedView] side in
                 self?.swipedCallback?(indexPath, side)
-                hostedView.label.text = "😇"
+                hostedView.label.text = "Activated on \(side) side!"
             }
         }
         
@@ -101,6 +101,7 @@ class ViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "Swipe and Snap"
         
         tableView.register(SwipeableCell.self, forCellReuseIdentifier: CellID)
         tableView.dataSource = tableViewDataSource
