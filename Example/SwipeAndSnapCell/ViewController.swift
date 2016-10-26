@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwipeAndSnapCell
 
 let CellID = "Cell"
 
