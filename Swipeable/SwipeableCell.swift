@@ -39,12 +39,7 @@ public class SwipeableCell: UITableViewCell{
             hostedView.constrainToEdgesOf(otherView: swipeableContentView)
         }
     }
-    
-    public override func prepareForReuse() {
-        hostedView = nil
-        super.prepareForReuse()
-    }
-    
+
     // MARK: Constants
     
     static let BoxWidth: CGFloat = 75
@@ -146,6 +141,20 @@ public class SwipeableCell: UITableViewCell{
     }
     @objc fileprivate func didTapRightButton(){
         didActivateCallback?(activeSide)
+    }
+    
+    // MARK: Reuse
+    
+    public override func prepareForReuse() {
+        hostedView = nil
+        
+        leftButtonContainerRightConstraint.constant = 0
+        rightButtonContainerLeftConstraint.constant = 0
+        setNeedsLayout()
+        
+        scrollView.contentOffset = restingContentOffset
+        
+        super.prepareForReuse()
     }
     
     
