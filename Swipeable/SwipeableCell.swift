@@ -37,6 +37,30 @@ public class SwipeableCell: UITableViewCell{
             hostedView.constrainToEdgesOf(otherView: swipeableContentView)
         }
     }
+    
+    public var rightButton: UIButton? = nil {
+        didSet{
+            guard let rightButton = rightButton else{
+                oldValue?.removeFromSuperview(); return
+            }
+            rightButton.addTarget(self, action: #selector(SwipeableCell.didTapRightButton), for: .touchUpInside)
+            rightButtonContainer.addSubview(rightButton)
+            rightButton.constrainToEdgesOf(otherView: rightButtonContainer)
+        }
+    }
+    
+    public var leftButton: UIButton? = nil {
+        didSet{
+            guard let leftButton = leftButton else{
+                oldValue?.removeFromSuperview(); return
+            }
+            leftButton.addTarget(self, action: #selector(SwipeableCell.didTapLeftButton), for: .touchUpInside)
+            leftButtonContainer.addSubview(leftButton)
+            leftButton.constrainToEdgesOf(otherView: leftButtonContainer)
+        }
+    }
+    
+    
 
     // MARK: Constants
     
@@ -56,34 +80,20 @@ public class SwipeableCell: UITableViewCell{
     }(UIView())
 
     fileprivate let scrollView: UIScrollView = {
-        $0.backgroundColor = UIColor(red:0.16, green:0.58, blue:0.87, alpha:1.00)
         $0.showsHorizontalScrollIndicator = false
         return $0
     }(UIScrollView())
     
     fileprivate let leftButtonContainer: UIView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.backgroundColor = UIColor.purple
         return $0
     }(UIView())
     
     fileprivate let rightButtonContainer: UIView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.backgroundColor = UIColor.blue
         return $0
     }(UIView())
-    
-    fileprivate let leftButton: UIButton = {
-        $0.backgroundColor = UIColor.red
-        $0.translatesAutoresizingMaskIntoConstraints = false
-        return $0
-    }(UIButton(type: .custom))
-    
-    fileprivate let rightButton: UIButton = {
-        $0.backgroundColor = UIColor.orange
-        $0.translatesAutoresizingMaskIntoConstraints = false
-        return $0
-    }(UIButton(type: .custom))
+
     
     // MARK: Constraints
     
@@ -98,6 +108,7 @@ public class SwipeableCell: UITableViewCell{
     fileprivate var calibratedX: CGFloat{
         return abs(scrollView.contentOffset.x - restingContentOffset.x)
     }
+    
     fileprivate var isBeyondSnapPoint: Bool{
         switch (traitCollection.verticalSizeClass, traitCollection.horizontalSizeClass){
         case (.compact, .regular): // iPhone Plus in landscape
@@ -108,20 +119,16 @@ public class SwipeableCell: UITableViewCell{
             return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentageWhenHorizontallyCompact)
         }
     }
+    
     fileprivate var scrollViewDirection: UIScrollView.TravelDirection = .none
+    
     fileprivate var activeSide: SwipeSide {
-        // TODO remove
-        let localCalibratedX = (scrollView.contentOffset.x - restingContentOffset.x)
-        if localCalibratedX == 0{
-            return .none
-        }
-        else if localCalibratedX < 0{
-            return .left
-        }
-        else {
-            return .right
-        }
+        let offset = (scrollView.contentOffset.x - restingContentOffset.x)
+        if offset == 0 { return .none }
+        else if offset < 0 { return .left }
+        else { return .right }
     }
+    
     fileprivate var lastContentOffset: CGFloat = 0
     fileprivate var hasSnappedOut: Bool = false
     
@@ -222,13 +229,6 @@ public class SwipeableCell: UITableViewCell{
         leftButtonContainerRightConstraint = leftButtonContainer.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 0)
         leftButtonContainerRightConstraint?.isActive = true
         
-        // left button setup:
-        leftButton.addTarget(self, action: #selector(SwipeableCell.didTapLeftButton), for: .touchUpInside)
-        leftButtonContainer.addSubview(leftButton)
-        
-        leftButton.constrainToEdgesOf(otherView: leftButtonContainer)
-        
-        
         // rightButtonContainer setup:
         addSubview(rightButtonContainer)
         
@@ -242,12 +242,6 @@ public class SwipeableCell: UITableViewCell{
         
         rightButtonContainerLeftConstraint = rightButtonContainer.leftAnchor.constraint(equalTo: scrollView.rightAnchor, constant: 0)
         rightButtonContainerLeftConstraint?.isActive = true
-        
-        // right button setup:
-        rightButton.addTarget(self, action: #selector(SwipeableCell.didTapRightButton), for: .touchUpInside)
-        rightButtonContainer.addSubview(rightButton)
-        
-        rightButton.constrainToEdgesOf(otherView: rightButtonContainer)
         
         setNeedsLayout()
         layoutSubviews()

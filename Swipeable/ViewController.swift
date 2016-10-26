@@ -30,7 +30,7 @@ class TableViewDataSource: NSObject, UITableViewDataSource{
         }
         
         cell.hostedView = label
-        
+        cell.backgroundColor = UIColor.red
         return cell
     }
     func numberOfSections(in tableView: UITableView) -> Int {
