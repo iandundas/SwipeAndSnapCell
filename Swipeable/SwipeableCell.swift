@@ -60,6 +60,12 @@ public class SwipeableCell: UITableViewCell{
         }
     }
     
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = UIColor(red:0.86, green:0.87, blue:0.87, alpha:1.00)
+    }
+    
+    required public init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
 
     // MARK: Constants
@@ -68,7 +74,7 @@ public class SwipeableCell: UITableViewCell{
     static let DampingAmount: CGFloat = 0.15
     static let SnapAtPercentageWhenHorizontallyCompact: CGFloat = 0.44
     static let SnapAtPercentageWhenHorizontallyRegular: CGFloat = 0.2
-    static let SnapAnimationDuration: TimeInterval = 0.4
+    static let SnapAnimationDuration: TimeInterval = 0.3
     
     
     // MARK: Views
