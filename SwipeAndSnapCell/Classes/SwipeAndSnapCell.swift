@@ -159,9 +159,11 @@ public class SwipeAndSnapCell: UITableViewCell{
     }
     
     @objc fileprivate func didTapLeftButton(){
+        self.resetPosition()
         didActivateCallback?(activeSide)
     }
     @objc fileprivate func didTapRightButton(){
+        self.resetPosition()
         didActivateCallback?(activeSide)
     }
     
@@ -186,6 +188,11 @@ public class SwipeAndSnapCell: UITableViewCell{
         scrollView.contentOffset = restingContentOffset
     }
     
+    // MARK: Resetting:
+    
+    public func resetPosition(){
+        scrollView.setContentOffset(self.restingContentOffset, animated: true)
+    }
     
     // MARK: Drawing Subviews
     
@@ -327,14 +334,14 @@ extension SwipeAndSnapCell: UIScrollViewDelegate{
                 
                 default:
                     DispatchQueue.main.async {
-                        scrollView.setContentOffset(self.restingContentOffset, animated: true)
+                        self.resetPosition()
                     }
             }
         }
         else if isBeyondSnapPoint {
             DispatchQueue.main.async {
                 self.didSwipePastSnapPoint(side: self.activeSide)
-                self.scrollView.setContentOffset(self.restingContentOffset, animated: true)
+                self.resetPosition()
             }
         }
     }

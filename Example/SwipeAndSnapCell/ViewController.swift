@@ -108,9 +108,9 @@ class ViewController: UITableViewController {
         tableView.delegate = tableViewDelegate
         
         tableViewDataSource.swipedCallback = { [weak self] indexPath, side in
-            let alert = UIAlertController(title: "Activated!", message: "IndexPath: {\(indexPath.section), \(indexPath.row)}, side: \(side)", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "ok", style: .default, handler: nil))
-            self?.present(alert, animated: true, completion: nil)
+//            let alert = UIAlertController(title: "Activated!", message: "IndexPath: {\(indexPath.section), \(indexPath.row)}, side: \(side)", preferredStyle: .alert)
+//            alert.addAction(UIAlertAction(title: "ok", style: .default, handler: nil))
+//            self?.present(alert, animated: true, completion: nil)
         }
     }
 }
