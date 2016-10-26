@@ -20,7 +20,7 @@ class CellHostedView: UIView {
         
         super.init(frame: frame)
         
-        label.backgroundColor = UIColor(red:0.65, green:0.78, blue:0.90, alpha:1.00)
+        label.backgroundColor = generateRandomPastelColor(withMixedColor: nil)
         label.font = UIFont(name: "Helvetica", size: 20)
         label.textAlignment = .center
         label.text = "😊"
@@ -37,10 +37,10 @@ class CellHostedView: UIView {
 
 class TableViewDataSource: NSObject, UITableViewDataSource{
     
-    var swipedCallback: ((IndexPath, SwipeableCell.SwipeSide)->())? = nil
+    var swipedCallback: ((IndexPath, SwipeAndSnapCell.SwipeSide)->())? = nil
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CellID) as! SwipeableCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellID) as! SwipeAndSnapCell
         
         if cell.hostedView == nil{
             let hostedView = CellHostedView()
@@ -52,7 +52,7 @@ class TableViewDataSource: NSObject, UITableViewDataSource{
             
             cell.didActivateCallback = { [weak self, unowned hostedView] side in
                 self?.swipedCallback?(indexPath, side)
-                hostedView.label.text = "😇"
+                hostedView.label.text = "Activated on \(side) side!"
             }
         }
         
@@ -101,15 +101,16 @@ class ViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "Swipe and Snap"
         
-        tableView.register(SwipeableCell.self, forCellReuseIdentifier: CellID)
+        tableView.register(SwipeAndSnapCell.self, forCellReuseIdentifier: CellID)
         tableView.dataSource = tableViewDataSource
         tableView.delegate = tableViewDelegate
         
         tableViewDataSource.swipedCallback = { [weak self] indexPath, side in
-            let alert = UIAlertController(title: "Activated!", message: "IndexPath: {\(indexPath.section), \(indexPath.row)}, side: \(side)", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "ok", style: .default, handler: nil))
-            self?.present(alert, animated: true, completion: nil)
+//            let alert = UIAlertController(title: "Activated!", message: "IndexPath: {\(indexPath.section), \(indexPath.row)}, side: \(side)", preferredStyle: .alert)
+//            alert.addAction(UIAlertAction(title: "ok", style: .default, handler: nil))
+//            self?.present(alert, animated: true, completion: nil)
         }
     }
 }

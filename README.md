@@ -7,18 +7,17 @@
 
 An example implementation of the swipe-able cell used in iOS10's Mail.app, where you can swipe to reveal a button, or swipe fully across to perform the action immediately.
 
-
-## gif:
-<img src="https://www.dropbox.com/s/vetnxf14wukrhf5/swipeable%20cell%202.gif?dl=1" />
-
 I hope it's useful to somebody, I'll be using it in v2.0 of [Tacks](http://www.tacks.cc).
 
+<img src="http://i.giphy.com/l2JhJTk3klLBgzepO.gif" />
 
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
+
+Swift 3.0
 
 ## Installation
 

@@ -11,7 +11,7 @@
 		1B6F6B755329572FBEC64B5719E50859 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
 		3A37BDA458334211BB46DDAE2EBBF04C /* Pods-SwipeAndSnapCell_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 875883BA714242EC600864A1E9583561 /* Pods-SwipeAndSnapCell_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6F9F52569170EABDA180E51FFCDA6FE8 /* SwipeAndSnapCell-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 020AACEAAB15C36428B3AD30AA3BF7C8 /* SwipeAndSnapCell-dummy.m */; };
-		7D9B39FAB84C4146071575ADB3F8CF1C /* SwipeableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D51B5ADFDD427EDCFB742F8365DEC9E /* SwipeableCell.swift */; };
+		7D9B39FAB84C4146071575ADB3F8CF1C /* SwipeAndSnapCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D51B5ADFDD427EDCFB742F8365DEC9E /* SwipeAndSnapCell.swift */; };
 		8B994C98D8AF99640D3657C4B55CB4CD /* SwipeAndSnapCell-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB7EBD4BBC7A95473307C2E260B90A1 /* SwipeAndSnapCell-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ABCA652684C021C5E5BC0D6DAE9D8A79 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B694F8E33132E53832AB806110122F /* Extensions.swift */; };
 		B3338FE0BCD9FE512CC881AA6900481F /* Pods-SwipeAndSnapCell_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 19E5B12A02566596B7A31601445FF463 /* Pods-SwipeAndSnapCell_Example-dummy.m */; };
@@ -36,7 +36,7 @@
 		114FE8DB4E9C0C3DA587B41F7007377C /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		15E376D286658E503EC5B7EED57F79B2 /* Pods-SwipeAndSnapCell_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-SwipeAndSnapCell_Example-resources.sh"; sourceTree = "<group>"; };
 		19E5B12A02566596B7A31601445FF463 /* Pods-SwipeAndSnapCell_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SwipeAndSnapCell_Example-dummy.m"; sourceTree = "<group>"; };
-		1D51B5ADFDD427EDCFB742F8365DEC9E /* SwipeableCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwipeableCell.swift; sourceTree = "<group>"; };
+		1D51B5ADFDD427EDCFB742F8365DEC9E /* SwipeAndSnapCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwipeAndSnapCell.swift; sourceTree = "<group>"; };
 		1F856F09F1ECE80CB10B1698F6D90E9E /* SwipeAndSnapCell-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SwipeAndSnapCell-prefix.pch"; sourceTree = "<group>"; };
 		33F01CBC788F165EBA5CA3CC82438C3A /* Pods-SwipeAndSnapCell_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SwipeAndSnapCell_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		3A36304721F27C7300EF5F8DB498C8B2 /* Pods-SwipeAndSnapCell_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-SwipeAndSnapCell_Example-frameworks.sh"; sourceTree = "<group>"; };
@@ -153,7 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				D7B694F8E33132E53832AB806110122F /* Extensions.swift */,
-				1D51B5ADFDD427EDCFB742F8365DEC9E /* SwipeableCell.swift */,
+				1D51B5ADFDD427EDCFB742F8365DEC9E /* SwipeAndSnapCell.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -349,7 +349,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ABCA652684C021C5E5BC0D6DAE9D8A79 /* Extensions.swift in Sources */,
-				7D9B39FAB84C4146071575ADB3F8CF1C /* SwipeableCell.swift in Sources */,
+				7D9B39FAB84C4146071575ADB3F8CF1C /* SwipeAndSnapCell.swift in Sources */,
 				6F9F52569170EABDA180E51FFCDA6FE8 /* SwipeAndSnapCell-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
