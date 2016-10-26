@@ -8,9 +8,9 @@
 
 import UIKit
 
-class SwipeableCell: UITableViewCell{
+public class SwipeableCell: UITableViewCell{
     
-    enum SwipeSide{
+    public enum SwipeSide{
         case none
         case left
         case right
@@ -24,82 +24,174 @@ class SwipeableCell: UITableViewCell{
         }
     }
     
+    public var didActivateCallback: ((SwipeSide)->())? = nil
+    
+    // Hosted View will be stretched (using AutoLayout) to fill the full dimensions of the cell. 
+    public var hostedView: UIView? = nil {
+        didSet{
+            guard let hostedView = hostedView else {
+                oldValue?.removeFromSuperview()
+                return
+            }
+            swipeableContentView.addSubview(hostedView)
+            hostedView.constrainToEdgesOf(otherView: swipeableContentView)
+        }
+    }
+    
+    public var rightButton: UIButton? = nil {
+        didSet{
+            guard let button = rightButton else{
+                oldValue?.removeFromSuperview(); return
+            }
+            rightButtonContainer.addSubview(button)
+            button.constrainToEdgesOf(otherView: rightButtonContainer)
+            
+            button.contentHorizontalAlignment = .left
+            button.addTarget(self, action: #selector(SwipeableCell.didTapRightButton), for: .touchUpInside)
+        }
+    }
+    
+    public var leftButton: UIButton? = nil {
+        didSet{
+            guard let button = leftButton else{
+                oldValue?.removeFromSuperview(); return
+            }
+            leftButtonContainer.addSubview(button)
+            button.constrainToEdgesOf(otherView: leftButtonContainer)
+            
+            button.contentHorizontalAlignment = .right
+            button.addTarget(self, action: #selector(SwipeableCell.didTapLeftButton), for: .touchUpInside)
+        }
+    }
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = UIColor(red:0.86, green:0.87, blue:0.87, alpha:1.00)
+    }
+    
+    required public init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    
+
     // MARK: Constants
     
-    static let id: String = "Cell"
     static let BoxWidth: CGFloat = 75
     static let DampingAmount: CGFloat = 0.15
-    static let SnapAtPercentage: CGFloat = 0.44
-    static let SnapAnimationDuration: TimeInterval = 0.4
+    static let SnapAtPercentageWhenHorizontallyCompact: CGFloat = 0.44
+    static let SnapAtPercentageWhenHorizontallyRegular: CGFloat = 0.2
+    static let SnapAnimationDuration: TimeInterval = 0.3
     
     
     // MARK: Views
     
-    let swipeableContentView: UIView = {
+    fileprivate let swipeableContentView: UIView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.backgroundColor = UIColor.white
         return $0
     }(UIView())
 
     fileprivate let scrollView: UIScrollView = {
-        $0.backgroundColor = UIColor(red:0.16, green:0.58, blue:0.87, alpha:1.00)
         $0.showsHorizontalScrollIndicator = false
         return $0
     }(UIScrollView())
     
     fileprivate let leftButtonContainer: UIView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.backgroundColor = UIColor.purple
         return $0
     }(UIView())
     
     fileprivate let rightButtonContainer: UIView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.backgroundColor = UIColor.blue
         return $0
     }(UIView())
-    
-    fileprivate let leftButton: UIButton = {
-        $0.backgroundColor = UIColor.red
-        $0.translatesAutoresizingMaskIntoConstraints = false
-        return $0
-    }(UIButton(type: .custom))
-    
-    fileprivate let rightButton: UIButton = {
-        $0.backgroundColor = UIColor.orange
-        $0.translatesAutoresizingMaskIntoConstraints = false
-        return $0
-    }(UIButton(type: .custom))
+
     
     // MARK: Constraints
     
-    var leftButtonContainerRightConstraint: NSLayoutConstraint! = nil
-    var rightButtonContainerLeftConstraint: NSLayoutConstraint! = nil
+    fileprivate var leftButtonContainerRightConstraint: NSLayoutConstraint? = nil
+    fileprivate var rightButtonContainerLeftConstraint: NSLayoutConstraint? = nil
     
+    // MARK: State
+    
+    fileprivate var restingContentOffset: CGPoint{
+        return CGPoint(x: SwipeableCell.BoxWidth, y: 0)
+    }
+    fileprivate var calibratedX: CGFloat{
+        return abs(scrollView.contentOffset.x - restingContentOffset.x)
+    }
+    
+    fileprivate var isBeyondSnapPoint: Bool{
+        switch (traitCollection.verticalSizeClass, traitCollection.horizontalSizeClass){
+        case (.compact, .regular): // iPhone Plus in landscape
+            return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentageWhenHorizontallyRegular)
+        case (.compact, .compact): // iPhone in landscape
+            return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentageWhenHorizontallyRegular)
+        default:
+            return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentageWhenHorizontallyCompact)
+        }
+    }
+    
+    fileprivate var scrollViewDirection: UIScrollView.TravelDirection = .none
+    
+    fileprivate var activeSide: SwipeSide {
+        let offset = (scrollView.contentOffset.x - restingContentOffset.x)
+        if offset == 0 { return .none }
+        else if offset < 0 { return .left }
+        else { return .right }
+    }
+    
+    fileprivate var lastContentOffset: CGFloat = 0
+    fileprivate var hasSnappedOut: Bool = false
+    
+    fileprivate func constraintForSide(side: SwipeSide) -> NSLayoutConstraint?{
+        guard activeSide != .none else {return nil}
+        return activeSide == .left ? leftButtonContainerRightConstraint : rightButtonContainerLeftConstraint
+    }
+    
+    fileprivate func constraintForOtherSideOf(side: SwipeSide) -> NSLayoutConstraint?{
+        guard activeSide != .none else {return nil}
+        return activeSide == .left ? rightButtonContainerLeftConstraint : leftButtonContainerRightConstraint
+    }
     
     // MARK: Event or Button taps
     
-    var successCallback: ((SwipeSide)->())? = { side in
-        print("Swiped on side: \(side)")
+    fileprivate func didSwipePastSnapPoint(side: SwipeSide){
+        didActivateCallback?(side)
     }
     
-    func didSwipePastSnapPoint(side: SwipeSide){
-        successCallback?(side)
+    @objc fileprivate func didTapLeftButton(){
+        didActivateCallback?(activeSide)
+    }
+    @objc fileprivate func didTapRightButton(){
+        didActivateCallback?(activeSide)
     }
     
-    func didTapLeftButton(){
-        successCallback?(activeSide)
+    // MARK: Reuse
+    
+    public override func prepareForReuse() {
+        leftButtonContainerRightConstraint?.constant = 0
+        rightButtonContainerLeftConstraint?.constant = 0
+        setNeedsLayout()
+        
+        scrollView.contentOffset = restingContentOffset
+        
+        super.prepareForReuse()
     }
-    func didTapRightButton(){
-        successCallback?(activeSide)
+    
+    // MARK: rotation
+
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?){
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        scrollView.contentSize = CGSize(width: bounds.width + (SwipeableCell.BoxWidth * 2), height: scrollView.height)
+        scrollView.contentOffset = restingContentOffset
     }
     
     
     // MARK: Drawing Subviews
     
     private var hasSetupSubviews = false
-    
-    override func layoutSubviews() {
+
+    override public func layoutSubviews() {
         super.layoutSubviews()
         
         if !hasSetupSubviews{
@@ -143,14 +235,7 @@ class SwipeableCell: UITableViewCell{
             ])
         
         leftButtonContainerRightConstraint = leftButtonContainer.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 0)
-        leftButtonContainerRightConstraint.isActive = true
-        
-        // left button setup:
-        leftButton.addTarget(self, action: #selector(SwipeableCell.didTapLeftButton), for: .touchUpInside)
-        leftButtonContainer.addSubview(leftButton)
-        
-        leftButton.constrainToEdgesOf(otherView: leftButtonContainer)
-        
+        leftButtonContainerRightConstraint?.isActive = true
         
         // rightButtonContainer setup:
         addSubview(rightButtonContainer)
@@ -164,56 +249,13 @@ class SwipeableCell: UITableViewCell{
             ])
         
         rightButtonContainerLeftConstraint = rightButtonContainer.leftAnchor.constraint(equalTo: scrollView.rightAnchor, constant: 0)
-        rightButtonContainerLeftConstraint.isActive = true
-        
-        // right button setup:
-        rightButton.addTarget(self, action: #selector(SwipeableCell.didTapRightButton), for: .touchUpInside)
-        rightButtonContainer.addSubview(rightButton)
-        
-        rightButton.constrainToEdgesOf(otherView: rightButtonContainer)
+        rightButtonContainerLeftConstraint?.isActive = true
         
         setNeedsLayout()
         layoutSubviews()
         
         scrollView.contentSize = CGSize(width: bounds.width + (SwipeableCell.BoxWidth * 2), height: scrollView.height)
         scrollView.contentOffset = restingContentOffset
-    }
-    
-    
-    fileprivate var restingContentOffset: CGPoint{
-        return CGPoint(x: SwipeableCell.BoxWidth, y: 0)
-    }
-    fileprivate var calibratedX: CGFloat{
-        return abs(scrollView.contentOffset.x - restingContentOffset.x)
-    }
-    fileprivate var isBeyondSnapPoint: Bool{
-        return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentage)
-    }
-    
-    fileprivate var scrollViewDirection: UIScrollView.TravelDirection = .none
-    fileprivate var activeSide: SwipeSide {
-        // TODO remove
-        let localCalibratedX = (scrollView.contentOffset.x - restingContentOffset.x)
-        if localCalibratedX == 0{
-            return .none
-        }
-        else if localCalibratedX < 0{
-            return .left
-        }
-        else {
-            return .right
-        }
-    }
-    fileprivate var lastContentOffset: CGFloat = 0
-    fileprivate var hasSnappedOut: Bool = false
-    
-    fileprivate func constraintForSide(side: SwipeSide) -> NSLayoutConstraint?{
-        guard activeSide != .none else {return nil}
-        return activeSide == .left ? leftButtonContainerRightConstraint : rightButtonContainerLeftConstraint
-    }
-    fileprivate func constraintForOtherSideOf(side: SwipeSide) -> NSLayoutConstraint?{
-        guard activeSide != .none else {return nil}
-        return activeSide == .left ? rightButtonContainerLeftConstraint : leftButtonContainerRightConstraint
     }
 }
 
@@ -234,14 +276,14 @@ extension SwipeableCell: UIScrollViewDelegate{
         }
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         scrollViewDirection = scrollView.scrollDirection(previousContentOffset: lastContentOffset)
         lastContentOffset = scrollView.contentOffset.x
         
         guard let constraint = constraintForSide(side: activeSide), let otherConstraint = constraintForOtherSideOf(side: activeSide) else {
             // The last pass fires when contentOffset back to normal, but we haven't fully applied it to the buttons yet. Do it here:
-            self.leftButtonContainerRightConstraint.constant = 0
-            self.rightButtonContainerLeftConstraint.constant = 0
+            self.leftButtonContainerRightConstraint?.constant = 0
+            self.rightButtonContainerLeftConstraint?.constant = 0
             self.layoutIfNeeded()
             return
         }
@@ -270,7 +312,7 @@ extension SwipeableCell: UIScrollViewDelegate{
         }
     }
     
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate: Bool){
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate: Bool){
         if calibratedX < SwipeableCell.BoxWidth{
             switch (activeSide, scrollViewDirection) {
                 case (.left, .right):
