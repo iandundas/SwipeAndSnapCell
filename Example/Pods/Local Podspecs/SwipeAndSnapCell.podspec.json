@@ -1,9 +1,9 @@
 {
   "name": "SwipeAndSnapCell",
-  "version": "0.1.0",
-  "summary": "A short description of SwipeAndSnapCell.",
-  "description": "TODO: Add long description of the pod here.",
-  "homepage": "https://github.com/<GITHUB_USERNAME>/SwipeAndSnapCell",
+  "version": "0.4.0",
+  "summary": "Cell which immitates iOS10's Mail.app cell swiping behavior",
+  "description": "An example implementation of the swipe-able cell used in iOS10's Mail.app, where you can swipe to reveal a button, or swipe fully across to perform the action immediately.",
+  "homepage": "https://github.com/iandundas/SwipeAndSnapCell",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
@@ -12,9 +12,10 @@
     "Ian Dundas": "contact@iandundas.co.uk"
   },
   "source": {
-    "git": "https://github.com/<GITHUB_USERNAME>/SwipeAndSnapCell.git",
-    "tag": "0.1.0"
+    "git": "https://github.com/iandundas/SwipeAndSnapCell.git",
+    "tag": "0.4.0"
   },
+  "social_media_url": "https://twitter.com/id",
   "platforms": {
     "ios": "9.0"
   },
