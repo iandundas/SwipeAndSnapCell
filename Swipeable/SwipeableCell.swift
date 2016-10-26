@@ -8,9 +8,9 @@
 
 import UIKit
 
-class SwipeableCell: UITableViewCell{
+public class SwipeableCell: UITableViewCell{
     
-    enum SwipeSide{
+    public enum SwipeSide{
         case none
         case left
         case right
@@ -24,9 +24,29 @@ class SwipeableCell: UITableViewCell{
         }
     }
     
+    public var didActivateCallback: ((SwipeSide)->())? = { side in
+        print("Swiped on side: \(side)")
+    }
+    
+    // Hosted View will be stretched (using AutoLayout) to fill the full dimensions of the cell. 
+    public var hostedView: UIView? = nil {
+        didSet{
+            guard let hostedView = hostedView else {
+                oldValue?.removeFromSuperview()
+                return
+            }
+            swipeableContentView.addSubview(hostedView)
+            hostedView.constrainToEdgesOf(otherView: swipeableContentView)
+        }
+    }
+    
+    public override func prepareForReuse() {
+        hostedView = nil
+        super.prepareForReuse()
+    }
+    
     // MARK: Constants
     
-    static let id: String = "Cell"
     static let BoxWidth: CGFloat = 75
     static let DampingAmount: CGFloat = 0.15
     static let SnapAtPercentage: CGFloat = 0.44
@@ -35,7 +55,7 @@ class SwipeableCell: UITableViewCell{
     
     // MARK: Views
     
-    let swipeableContentView: UIView = {
+    fileprivate let swipeableContentView: UIView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.backgroundColor = UIColor.white
         return $0
@@ -73,25 +93,59 @@ class SwipeableCell: UITableViewCell{
     
     // MARK: Constraints
     
-    var leftButtonContainerRightConstraint: NSLayoutConstraint! = nil
-    var rightButtonContainerLeftConstraint: NSLayoutConstraint! = nil
+    fileprivate var leftButtonContainerRightConstraint: NSLayoutConstraint! = nil
+    fileprivate var rightButtonContainerLeftConstraint: NSLayoutConstraint! = nil
     
+    // MARK: State
+    
+    fileprivate var restingContentOffset: CGPoint{
+        return CGPoint(x: SwipeableCell.BoxWidth, y: 0)
+    }
+    fileprivate var calibratedX: CGFloat{
+        return abs(scrollView.contentOffset.x - restingContentOffset.x)
+    }
+    fileprivate var isBeyondSnapPoint: Bool{
+        return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentage)
+    }
+    
+    fileprivate var scrollViewDirection: UIScrollView.TravelDirection = .none
+    fileprivate var activeSide: SwipeSide {
+        // TODO remove
+        let localCalibratedX = (scrollView.contentOffset.x - restingContentOffset.x)
+        if localCalibratedX == 0{
+            return .none
+        }
+        else if localCalibratedX < 0{
+            return .left
+        }
+        else {
+            return .right
+        }
+    }
+    fileprivate var lastContentOffset: CGFloat = 0
+    fileprivate var hasSnappedOut: Bool = false
+    
+    fileprivate func constraintForSide(side: SwipeSide) -> NSLayoutConstraint?{
+        guard activeSide != .none else {return nil}
+        return activeSide == .left ? leftButtonContainerRightConstraint : rightButtonContainerLeftConstraint
+    }
+    
+    fileprivate func constraintForOtherSideOf(side: SwipeSide) -> NSLayoutConstraint?{
+        guard activeSide != .none else {return nil}
+        return activeSide == .left ? rightButtonContainerLeftConstraint : leftButtonContainerRightConstraint
+    }
     
     // MARK: Event or Button taps
     
-    var successCallback: ((SwipeSide)->())? = { side in
-        print("Swiped on side: \(side)")
+    fileprivate func didSwipePastSnapPoint(side: SwipeSide){
+        didActivateCallback?(side)
     }
     
-    func didSwipePastSnapPoint(side: SwipeSide){
-        successCallback?(side)
+    @objc fileprivate func didTapLeftButton(){
+        didActivateCallback?(activeSide)
     }
-    
-    func didTapLeftButton(){
-        successCallback?(activeSide)
-    }
-    func didTapRightButton(){
-        successCallback?(activeSide)
+    @objc fileprivate func didTapRightButton(){
+        didActivateCallback?(activeSide)
     }
     
     
@@ -99,7 +153,7 @@ class SwipeableCell: UITableViewCell{
     
     private var hasSetupSubviews = false
     
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         
         if !hasSetupSubviews{
@@ -178,43 +232,6 @@ class SwipeableCell: UITableViewCell{
         scrollView.contentSize = CGSize(width: bounds.width + (SwipeableCell.BoxWidth * 2), height: scrollView.height)
         scrollView.contentOffset = restingContentOffset
     }
-    
-    
-    fileprivate var restingContentOffset: CGPoint{
-        return CGPoint(x: SwipeableCell.BoxWidth, y: 0)
-    }
-    fileprivate var calibratedX: CGFloat{
-        return abs(scrollView.contentOffset.x - restingContentOffset.x)
-    }
-    fileprivate var isBeyondSnapPoint: Bool{
-        return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentage)
-    }
-    
-    fileprivate var scrollViewDirection: UIScrollView.TravelDirection = .none
-    fileprivate var activeSide: SwipeSide {
-        // TODO remove
-        let localCalibratedX = (scrollView.contentOffset.x - restingContentOffset.x)
-        if localCalibratedX == 0{
-            return .none
-        }
-        else if localCalibratedX < 0{
-            return .left
-        }
-        else {
-            return .right
-        }
-    }
-    fileprivate var lastContentOffset: CGFloat = 0
-    fileprivate var hasSnappedOut: Bool = false
-    
-    fileprivate func constraintForSide(side: SwipeSide) -> NSLayoutConstraint?{
-        guard activeSide != .none else {return nil}
-        return activeSide == .left ? leftButtonContainerRightConstraint : rightButtonContainerLeftConstraint
-    }
-    fileprivate func constraintForOtherSideOf(side: SwipeSide) -> NSLayoutConstraint?{
-        guard activeSide != .none else {return nil}
-        return activeSide == .left ? rightButtonContainerLeftConstraint : leftButtonContainerRightConstraint
-    }
 }
 
 
@@ -234,7 +251,7 @@ extension SwipeableCell: UIScrollViewDelegate{
         }
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         scrollViewDirection = scrollView.scrollDirection(previousContentOffset: lastContentOffset)
         lastContentOffset = scrollView.contentOffset.x
         
@@ -270,7 +287,7 @@ extension SwipeableCell: UIScrollViewDelegate{
         }
     }
     
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate: Bool){
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate: Bool){
         if calibratedX < SwipeableCell.BoxWidth{
             switch (activeSide, scrollViewDirection) {
                 case (.left, .right):

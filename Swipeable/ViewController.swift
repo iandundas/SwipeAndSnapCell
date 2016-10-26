@@ -8,32 +8,28 @@
 
 import UIKit
 
+let CellID = "Cell"
+
 class TableViewDataSource: NSObject, UITableViewDataSource{
     
     var swipedCallback: ((IndexPath, SwipeableCell.SwipeSide)->())? = nil
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: SwipeableCell.id) as! SwipeableCell
-        cell.swipeableContentView.backgroundColor = UIColor(red:0.65, green:0.78, blue:0.90, alpha:1.00)
-        
-        // Not the best but will do for now:
-        cell.swipeableContentView.subviews.forEach { (view) in
-            view.removeFromSuperview()
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellID) as! SwipeableCell
         
         let label = UILabel()
+        label.backgroundColor = UIColor(red:0.65, green:0.78, blue:0.90, alpha:1.00)
         label.font = UIFont(name: "Helvetica", size: 20)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.text = "😊"
         
-        cell.successCallback = { [weak self, unowned label] side in
+        cell.didActivateCallback = { [weak self, unowned label] side in
             self?.swipedCallback?(indexPath, side)
             label.text = "😇"
         }
         
-        cell.swipeableContentView.addSubview(label)
-        label.constrainToEdgesOf(otherView: cell.swipeableContentView)
+        cell.hostedView = label
         
         return cell
     }
@@ -41,7 +37,7 @@ class TableViewDataSource: NSObject, UITableViewDataSource{
         return 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return 1000
     }
 }
 
@@ -63,7 +59,7 @@ class ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.register(SwipeableCell.self, forCellReuseIdentifier: SwipeableCell.id)
+        tableView.register(SwipeableCell.self, forCellReuseIdentifier: CellID)
         tableView.dataSource = tableViewDataSource
         tableView.delegate = tableViewDelegate
         
