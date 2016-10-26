@@ -158,8 +158,6 @@ public class SwipeableCell: UITableViewCell{
     // MARK: Reuse
     
     public override func prepareForReuse() {
-        hostedView = nil
-        
         leftButtonContainerRightConstraint?.constant = 0
         rightButtonContainerLeftConstraint?.constant = 0
         setNeedsLayout()
