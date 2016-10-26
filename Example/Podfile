@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'SwipeAndSnapCell_Example' do
+  pod 'SwipeAndSnapCell', :path => '../'
+
+  target 'SwipeAndSnapCell_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

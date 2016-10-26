@@ -1,0 +1,16 @@
+PODS:
+  - SwipeAndSnapCell (0.1.0)
+
+DEPENDENCIES:
+  - SwipeAndSnapCell (from `../`)
+
+EXTERNAL SOURCES:
+  SwipeAndSnapCell:
+    :path: ../
+
+SPEC CHECKSUMS:
+  SwipeAndSnapCell: a67413cc09bb22c16e87058035f2c3346cf5bcc0
+
+PODFILE CHECKSUM: 8ff504d51c170ed4a6b527ef104edcf67b7e8327
+
+COCOAPODS: 1.0.0
