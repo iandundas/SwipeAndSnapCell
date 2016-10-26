@@ -24,9 +24,7 @@ public class SwipeableCell: UITableViewCell{
         }
     }
     
-    public var didActivateCallback: ((SwipeSide)->())? = { side in
-        print("Swiped on side: \(side)")
-    }
+    public var didActivateCallback: ((SwipeSide)->())? = nil
     
     // Hosted View will be stretched (using AutoLayout) to fill the full dimensions of the cell. 
     public var hostedView: UIView? = nil {
@@ -44,7 +42,8 @@ public class SwipeableCell: UITableViewCell{
     
     static let BoxWidth: CGFloat = 75
     static let DampingAmount: CGFloat = 0.15
-    static let SnapAtPercentage: CGFloat = 0.44
+    static let SnapAtPercentageWhenHorizontallyCompact: CGFloat = 0.44
+    static let SnapAtPercentageWhenHorizontallyRegular: CGFloat = 0.2
     static let SnapAnimationDuration: TimeInterval = 0.4
     
     
@@ -88,8 +87,8 @@ public class SwipeableCell: UITableViewCell{
     
     // MARK: Constraints
     
-    fileprivate var leftButtonContainerRightConstraint: NSLayoutConstraint! = nil
-    fileprivate var rightButtonContainerLeftConstraint: NSLayoutConstraint! = nil
+    fileprivate var leftButtonContainerRightConstraint: NSLayoutConstraint? = nil
+    fileprivate var rightButtonContainerLeftConstraint: NSLayoutConstraint? = nil
     
     // MARK: State
     
@@ -100,7 +99,14 @@ public class SwipeableCell: UITableViewCell{
         return abs(scrollView.contentOffset.x - restingContentOffset.x)
     }
     fileprivate var isBeyondSnapPoint: Bool{
-        return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentage)
+        switch (traitCollection.verticalSizeClass, traitCollection.horizontalSizeClass){
+        case (.compact, .regular): // iPhone Plus in landscape
+            return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentageWhenHorizontallyRegular)
+        case (.compact, .compact): // iPhone in landscape
+            return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentageWhenHorizontallyRegular)
+        default:
+            return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentageWhenHorizontallyCompact)
+        }
     }
     fileprivate var scrollViewDirection: UIScrollView.TravelDirection = .none
     fileprivate var activeSide: SwipeSide {
@@ -147,8 +153,8 @@ public class SwipeableCell: UITableViewCell{
     public override func prepareForReuse() {
         hostedView = nil
         
-        leftButtonContainerRightConstraint.constant = 0
-        rightButtonContainerLeftConstraint.constant = 0
+        leftButtonContainerRightConstraint?.constant = 0
+        rightButtonContainerLeftConstraint?.constant = 0
         setNeedsLayout()
         
         scrollView.contentOffset = restingContentOffset
@@ -214,7 +220,7 @@ public class SwipeableCell: UITableViewCell{
             ])
         
         leftButtonContainerRightConstraint = leftButtonContainer.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 0)
-        leftButtonContainerRightConstraint.isActive = true
+        leftButtonContainerRightConstraint?.isActive = true
         
         // left button setup:
         leftButton.addTarget(self, action: #selector(SwipeableCell.didTapLeftButton), for: .touchUpInside)
@@ -235,7 +241,7 @@ public class SwipeableCell: UITableViewCell{
             ])
         
         rightButtonContainerLeftConstraint = rightButtonContainer.leftAnchor.constraint(equalTo: scrollView.rightAnchor, constant: 0)
-        rightButtonContainerLeftConstraint.isActive = true
+        rightButtonContainerLeftConstraint?.isActive = true
         
         // right button setup:
         rightButton.addTarget(self, action: #selector(SwipeableCell.didTapRightButton), for: .touchUpInside)
@@ -274,8 +280,8 @@ extension SwipeableCell: UIScrollViewDelegate{
         
         guard let constraint = constraintForSide(side: activeSide), let otherConstraint = constraintForOtherSideOf(side: activeSide) else {
             // The last pass fires when contentOffset back to normal, but we haven't fully applied it to the buttons yet. Do it here:
-            self.leftButtonContainerRightConstraint.constant = 0
-            self.rightButtonContainerLeftConstraint.constant = 0
+            self.leftButtonContainerRightConstraint?.constant = 0
+            self.rightButtonContainerLeftConstraint?.constant = 0
             self.layoutIfNeeded()
             return
         }
