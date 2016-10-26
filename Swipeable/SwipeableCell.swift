@@ -40,23 +40,27 @@ public class SwipeableCell: UITableViewCell{
     
     public var rightButton: UIButton? = nil {
         didSet{
-            guard let rightButton = rightButton else{
+            guard let button = rightButton else{
                 oldValue?.removeFromSuperview(); return
             }
-            rightButton.addTarget(self, action: #selector(SwipeableCell.didTapRightButton), for: .touchUpInside)
-            rightButtonContainer.addSubview(rightButton)
-            rightButton.constrainToEdgesOf(otherView: rightButtonContainer)
+            rightButtonContainer.addSubview(button)
+            button.constrainToEdgesOf(otherView: rightButtonContainer)
+            
+            button.contentHorizontalAlignment = .left
+            button.addTarget(self, action: #selector(SwipeableCell.didTapRightButton), for: .touchUpInside)
         }
     }
     
     public var leftButton: UIButton? = nil {
         didSet{
-            guard let leftButton = leftButton else{
+            guard let button = leftButton else{
                 oldValue?.removeFromSuperview(); return
             }
-            leftButton.addTarget(self, action: #selector(SwipeableCell.didTapLeftButton), for: .touchUpInside)
-            leftButtonContainer.addSubview(leftButton)
-            leftButton.constrainToEdgesOf(otherView: leftButtonContainer)
+            leftButtonContainer.addSubview(button)
+            button.constrainToEdgesOf(otherView: leftButtonContainer)
+            
+            button.contentHorizontalAlignment = .right
+            button.addTarget(self, action: #selector(SwipeableCell.didTapLeftButton), for: .touchUpInside)
         }
     }
     

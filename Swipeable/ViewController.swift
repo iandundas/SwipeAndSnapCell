@@ -10,6 +10,30 @@ import UIKit
 
 let CellID = "Cell"
 
+class CellHostedView: UIView {
+    
+    let label: UILabel
+    
+    override init(frame: CGRect) {
+        label = UILabel()
+        
+        super.init(frame: frame)
+        
+        label.backgroundColor = UIColor(red:0.65, green:0.78, blue:0.90, alpha:1.00)
+        label.font = UIFont(name: "Helvetica", size: 20)
+        label.textAlignment = .center
+        label.text = "😊"
+        
+        addSubview(label)
+        label.constrainToEdgesOf(otherView: self)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+
 class TableViewDataSource: NSObject, UITableViewDataSource{
     
     var swipedCallback: ((IndexPath, SwipeableCell.SwipeSide)->())? = nil
@@ -17,20 +41,32 @@ class TableViewDataSource: NSObject, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellID) as! SwipeableCell
         
-        let label = UILabel()
-        label.backgroundColor = UIColor(red:0.65, green:0.78, blue:0.90, alpha:1.00)
-        label.font = UIFont(name: "Helvetica", size: 20)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .center
-        label.text = "😊"
-        
-        cell.didActivateCallback = { [weak self, unowned label] side in
-            self?.swipedCallback?(indexPath, side)
-            label.text = "😇"
+        if cell.hostedView == nil{
+            let hostedView = CellHostedView()
+            cell.hostedView = hostedView
         }
         
-        cell.hostedView = label
-        cell.backgroundColor = UIColor.red
+        if let hostedView = cell.hostedView as? CellHostedView{
+            hostedView.label.text = "Cell: \(indexPath.row)"
+            
+            cell.didActivateCallback = { [weak self, unowned hostedView] side in
+                self?.swipedCallback?(indexPath, side)
+                hostedView.label.text = "😇"
+            }
+        }
+        
+        if cell.leftButton == nil {
+            let button = UIButton(type: .custom)
+            button.backgroundColor = UIColor(red:0.99, green:0.19, blue:0.35, alpha:1.00)
+            cell.leftButton = button
+        }
+        
+        if cell.rightButton == nil {
+            let button = UIButton(type: .custom)
+            button.backgroundColor = UIColor(red:0.56, green:0.56, blue:0.58, alpha:1.00)
+            cell.rightButton = button
+        }
+        
         return cell
     }
     func numberOfSections(in tableView: UITableView) -> Int {
