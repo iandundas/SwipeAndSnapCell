@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		3C15383D1DC0834B00E647D5 /* SwipeAndSnapCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C15383B1DC0834B00E647D5 /* SwipeAndSnapCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C1538451DC0838600E647D5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1538431DC0838600E647D5 /* Extensions.swift */; };
-		3C1538461DC0838600E647D5 /* SwipeableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1538441DC0838600E647D5 /* SwipeableCell.swift */; };
+		3CB647191DC08E3D00014B7B /* SwipeAndSnapCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB647181DC08E3D00014B7B /* SwipeAndSnapCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,7 +17,7 @@
 		3C15383B1DC0834B00E647D5 /* SwipeAndSnapCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwipeAndSnapCell.h; sourceTree = "<group>"; };
 		3C15383C1DC0834B00E647D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C1538431DC0838600E647D5 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = Classes/Extensions.swift; sourceTree = "<group>"; };
-		3C1538441DC0838600E647D5 /* SwipeableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwipeableCell.swift; path = Classes/SwipeableCell.swift; sourceTree = "<group>"; };
+		3CB647181DC08E3D00014B7B /* SwipeAndSnapCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwipeAndSnapCell.swift; path = Classes/SwipeAndSnapCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				3C1538431DC0838600E647D5 /* Extensions.swift */,
-				3C1538441DC0838600E647D5 /* SwipeableCell.swift */,
+				3CB647181DC08E3D00014B7B /* SwipeAndSnapCell.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -147,8 +147,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C1538461DC0838600E647D5 /* SwipeableCell.swift in Sources */,
 				3C1538451DC0838600E647D5 /* Extensions.swift in Sources */,
+				3CB647191DC08E3D00014B7B /* SwipeAndSnapCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
