@@ -102,7 +102,6 @@ public class SwipeableCell: UITableViewCell{
     fileprivate var isBeyondSnapPoint: Bool{
         return calibratedX >= (bounds.width * SwipeableCell.SnapAtPercentage)
     }
-    
     fileprivate var scrollViewDirection: UIScrollView.TravelDirection = .none
     fileprivate var activeSide: SwipeSide {
         // TODO remove
@@ -157,11 +156,20 @@ public class SwipeableCell: UITableViewCell{
         super.prepareForReuse()
     }
     
+    // MARK: rotation
+
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?){
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        scrollView.contentSize = CGSize(width: bounds.width + (SwipeableCell.BoxWidth * 2), height: scrollView.height)
+        scrollView.contentOffset = restingContentOffset
+    }
+    
     
     // MARK: Drawing Subviews
     
     private var hasSetupSubviews = false
-    
+
     override public func layoutSubviews() {
         super.layoutSubviews()
         
