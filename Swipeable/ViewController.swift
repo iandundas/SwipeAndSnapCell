@@ -58,12 +58,18 @@ class TableViewDataSource: NSObject, UITableViewDataSource{
         if cell.leftButton == nil {
             let button = UIButton(type: .custom)
             button.backgroundColor = UIColor(red:0.99, green:0.19, blue:0.35, alpha:1.00)
+            
+            let image = UIImage(named: "heart")!
+            button.setImage(image, for: .normal)
             cell.leftButton = button
         }
         
         if cell.rightButton == nil {
             let button = UIButton(type: .custom)
             button.backgroundColor = UIColor(red:0.56, green:0.56, blue:0.58, alpha:1.00)
+            
+            let image = UIImage(named: "trash")!
+            button.setImage(image, for: .normal)
             cell.rightButton = button
         }
         
