@@ -130,7 +130,7 @@ public class SwipeAndSnapCell: UITableViewCell{
         }
     }
     
-     var scrollViewDirection: UIScrollView.TravelDirection = .none
+     var scrollViewDirection: ScrollViewTravelDirection = .None
     
      var activeSide: SwipeSide {
         let offset = (scrollView.contentOffset.x - restingContentOffset.x)
@@ -322,12 +322,12 @@ extension SwipeAndSnapCell: UIScrollViewDelegate{
     public func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate: Bool){
         if calibratedX < SwipeAndSnapCell.BoxWidth{
             switch (activeSide, scrollViewDirection) {
-                case (.left, .right):
+                case (.left, .Right):
                     dispatch_async(dispatch_get_main_queue()) {
                         scrollView.setContentOffset(CGPoint(x: SwipeAndSnapCell.BoxWidth, y: 0), animated: true)
                     }
                 
-                case (.right, .left):
+                case (.right, .Left):
                     dispatch_async(dispatch_get_main_queue()){
                         scrollView.setContentOffset(CGPoint(x: self.restingContentOffset.x+SwipeAndSnapCell.BoxWidth, y: 0), animated: true)
                     }

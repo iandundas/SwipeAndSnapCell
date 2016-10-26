@@ -30,22 +30,22 @@ extension UIView{
     }
 }
 
+enum ScrollViewTravelDirection: Int{
+    case None
+    case Left
+    case Right
+}
+
 extension UIScrollView{
-    enum TravelDirection{
-        case none
-        case left
-        case right
-    }
-    
-    func scrollDirection(previousContentOffset: CGFloat) -> TravelDirection{
+    func scrollDirection(previousContentOffset: CGFloat) -> ScrollViewTravelDirection{
         if (previousContentOffset > contentOffset.x){
-            return .right
+            return .Right
         }
         else if (previousContentOffset < contentOffset.x){
-            return .left
+            return .Left
         }
         else{
-            return .none
+            return .None
         }
     }
 }
