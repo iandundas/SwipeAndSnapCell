@@ -8,6 +8,10 @@
 
 import UIKit
 
+public protocol Reusable{
+    func prepareForReuse()
+}
+
 public class SwipeAndSnapCell: UITableViewCell{
     
     public enum SwipeSide{
@@ -162,6 +166,7 @@ public class SwipeAndSnapCell: UITableViewCell{
         self.resetPosition()
         didActivateCallback?(activeSide)
     }
+    
     @objc  func didTapRightButton(){
         self.resetPosition()
         didActivateCallback?(activeSide)
@@ -175,6 +180,8 @@ public class SwipeAndSnapCell: UITableViewCell{
         setNeedsLayout()
         
         scrollView.contentOffset = restingContentOffset
+        
+        (hostedView as? Reusable)?.prepareForReuse()
         
         super.prepareForReuse()
     }
