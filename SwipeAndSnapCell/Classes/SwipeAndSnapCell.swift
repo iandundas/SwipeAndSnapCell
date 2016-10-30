@@ -275,7 +275,7 @@ public class SwipeAndSnapCell: UITableViewCell{
     }
     
     private func setupGestureRecognisers(){
-        let tap = UITapGestureRecognizer(target: self, action: Selector("didTapCell"))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(SwipeAndSnapCell.didTapCell))
         swipeableContentView.addGestureRecognizer(tap)
     }
     
