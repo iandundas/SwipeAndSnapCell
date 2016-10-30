@@ -211,8 +211,10 @@ public class SwipeAndSnapCell: UITableViewCell{
         if !hasSetupSubviews{
             hasSetupSubviews = true
             setupSubviews()
+            setupGestureRecognisers()
         }
     }
+    
     
     private func setupSubviews(){
         contentView.removeFromSuperview() // pah
@@ -270,6 +272,22 @@ public class SwipeAndSnapCell: UITableViewCell{
         
         scrollView.contentSize = CGSize(width: bounds.width + (SwipeAndSnapCell.BoxWidth * 2), height: scrollView.height)
         scrollView.contentOffset = restingContentOffset
+    }
+    
+    private func setupGestureRecognisers(){
+        let tap = UITapGestureRecognizer(target: self, action: Selector("didTapCell"))
+        swipeableContentView.addGestureRecognizer(tap)
+    }
+    
+    func didTapCell(){
+        var view: UIView? = self
+        while let superview = view?.superview{
+            if let tableView = superview as? UITableView, let indexPath = tableView.indexPath(for: self), let delegate = tableView.delegate {
+                delegate.tableView?(tableView, didSelectRowAt: indexPath)
+                return
+            }
+            view = superview
+        }
     }
 }
 
