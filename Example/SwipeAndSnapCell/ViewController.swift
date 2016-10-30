@@ -91,6 +91,9 @@ class TableViewDelegate: NSObject, UITableViewDelegate{
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         return false
     }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //
+    }
 }
 
 
