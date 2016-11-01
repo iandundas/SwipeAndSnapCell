@@ -19,23 +19,23 @@ private class TouchableView:UIView{
     var touchesDidEnd: ((TouchableView)->())? = nil
     var touchesDidCancel: ((TouchableView)->())? = nil
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesBegan(touches, withEvent: event)
         touchesDidBegin?(self)
     }
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesMoved(touches, with: event)
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesMoved(touches, withEvent: event)
         touchesDidMove?(self)
     }
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesEnded(touches, withEvent: event)
         touchesDidEnd?(self)
     }
     
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesCancelled(touches, with: event)
+    override func touchesCancelled(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesCancelled(touches, withEvent: event)
         touchesDidCancel?(self)
     }
 }
@@ -98,12 +98,12 @@ public class SwipeAndSnapCell: UITableViewCell{
     }
     
     public var underBackgroundColor = UIColor(red:0.86, green:0.87, blue:0.87, alpha:1.00)
-    public var overBackgroundColor = UIColor.white{
+    public var overBackgroundColor = UIColor.whiteColor(){
         didSet{
             self.swipeableContentView.backgroundColor = overBackgroundColor
         }
     }
-    public var highlightedBackgroundColor = UIColor.lightGray
+    public var highlightedBackgroundColor = UIColor.lightGrayColor()
     
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -125,7 +125,7 @@ public class SwipeAndSnapCell: UITableViewCell{
     
     // MARK: Views
     
-     let swipeableContentView: TouchableView = {
+    private lazy var swipeableContentView: TouchableView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.backgroundColor = self.overBackgroundColor
         
