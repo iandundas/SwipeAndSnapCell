@@ -223,10 +223,12 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = N8N37QWHHP;
 						LastSwiftMigration = 0810;
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = N8N37QWHHP;
 						LastSwiftMigration = 0810;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
@@ -493,6 +495,7 @@
 			baseConfigurationReference = 68E5C78B6043AC9CD87EB265 /* Pods-SwipeAndSnapCell_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = N8N37QWHHP;
 				INFOPLIST_FILE = SwipeAndSnapCell/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -508,6 +511,7 @@
 			baseConfigurationReference = 96609F5EEFC1A3A3DC9DA42B /* Pods-SwipeAndSnapCell_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = N8N37QWHHP;
 				INFOPLIST_FILE = SwipeAndSnapCell/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -522,6 +526,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A92F547E21E56F542837242A /* Pods-SwipeAndSnapCell_Tests.debug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = N8N37QWHHP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -542,6 +547,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 90EEA5E13A3149E05F141FE8 /* Pods-SwipeAndSnapCell_Tests.release.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = N8N37QWHHP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",

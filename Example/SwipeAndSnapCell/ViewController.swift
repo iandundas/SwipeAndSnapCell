@@ -20,7 +20,7 @@ class CellHostedView: UIView {
         
         super.init(frame: frame)
         
-        label.backgroundColor = generateRandomPastelColor(withMixedColor: nil)
+        label.backgroundColor = .clear
         label.font = UIFont(name: "Helvetica", size: 20)
         label.textAlignment = .center
         label.text = "😊"
@@ -45,6 +45,7 @@ class TableViewDataSource: NSObject, UITableViewDataSource{
         if cell.hostedView == nil{
             let hostedView = CellHostedView()
             cell.hostedView = hostedView
+            cell.overBackgroundColor = generateRandomPastelColor(withMixedColor: nil)
         }
         
         if let hostedView = cell.hostedView as? CellHostedView{
