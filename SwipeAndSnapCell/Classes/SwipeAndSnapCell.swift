@@ -8,6 +8,39 @@
 
 import UIKit
 
+public protocol Reusable{
+    func prepareForReuse()
+}
+
+private class TouchableView:UIView{
+    
+    var touchesDidBegin: ((TouchableView)->())? = nil
+    var touchesDidMove: ((TouchableView)->())? = nil
+    var touchesDidEnd: ((TouchableView)->())? = nil
+    var touchesDidCancel: ((TouchableView)->())? = nil
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        touchesDidBegin?(self)
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
+        touchesDidMove?(self)
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        touchesDidEnd?(self)
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        touchesDidCancel?(self)
+    }
+}
+
+
 public class SwipeAndSnapCell: UITableViewCell{
     
     public enum SwipeSide{
@@ -64,9 +97,18 @@ public class SwipeAndSnapCell: UITableViewCell{
         }
     }
     
+    public var underBackgroundColor = UIColor(red:0.86, green:0.87, blue:0.87, alpha:1.00)
+    public var overBackgroundColor = UIColor.white{
+        didSet{
+            self.swipeableContentView.backgroundColor = overBackgroundColor
+        }
+    }
+    public var highlightedBackgroundColor = UIColor.lightGray
+    
+    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = UIColor(red:0.86, green:0.87, blue:0.87, alpha:1.00)
+        backgroundColor = underBackgroundColor
     }
     
     required public init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -83,11 +125,21 @@ public class SwipeAndSnapCell: UITableViewCell{
     
     // MARK: Views
     
-    fileprivate let swipeableContentView: UIView = {
+    fileprivate lazy var swipeableContentView: TouchableView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.backgroundColor = UIColor.white
+        $0.backgroundColor = self.overBackgroundColor
+        
+        $0.touchesDidBegin = { [weak self] view in
+            view.backgroundColor = self?.highlightedBackgroundColor
+        }
+        $0.touchesDidEnd = { [weak self] view in
+            view.backgroundColor = self?.overBackgroundColor
+        }
+        $0.touchesDidCancel = { [weak self] view in
+            view.backgroundColor = self?.overBackgroundColor
+        }
         return $0
-    }(UIView())
+    }(TouchableView())
 
     fileprivate let scrollView: UIScrollView = {
         $0.showsHorizontalScrollIndicator = false
@@ -162,6 +214,7 @@ public class SwipeAndSnapCell: UITableViewCell{
         self.resetPosition()
         didActivateCallback?(activeSide)
     }
+    
     @objc fileprivate func didTapRightButton(){
         self.resetPosition()
         didActivateCallback?(activeSide)
@@ -175,6 +228,8 @@ public class SwipeAndSnapCell: UITableViewCell{
         setNeedsLayout()
         
         scrollView.contentOffset = restingContentOffset
+        
+        (hostedView as? Reusable)?.prepareForReuse()
         
         super.prepareForReuse()
     }
@@ -204,8 +259,10 @@ public class SwipeAndSnapCell: UITableViewCell{
         if !hasSetupSubviews{
             hasSetupSubviews = true
             setupSubviews()
+            setupGestureRecognisers()
         }
     }
+    
     
     private func setupSubviews(){
         contentView.removeFromSuperview() // pah
@@ -263,6 +320,22 @@ public class SwipeAndSnapCell: UITableViewCell{
         
         scrollView.contentSize = CGSize(width: bounds.width + (SwipeAndSnapCell.BoxWidth * 2), height: scrollView.height)
         scrollView.contentOffset = restingContentOffset
+    }
+    
+    private func setupGestureRecognisers(){
+        let tap = UITapGestureRecognizer(target: self, action: #selector(SwipeAndSnapCell.didTapCell))
+        swipeableContentView.addGestureRecognizer(tap)
+    }
+    
+    func didTapCell(){
+        var view: UIView? = self
+        while let superview = view?.superview{
+            if let tableView = superview as? UITableView, let indexPath = tableView.indexPath(for: self), let delegate = tableView.delegate {
+                delegate.tableView?(tableView, didSelectRowAt: indexPath)
+                return
+            }
+            view = superview
+        }
     }
 }
 
