@@ -192,7 +192,14 @@ open class SwipeAndSnapCell: UITableViewCell{
     }
     
     fileprivate var lastContentOffset: CGFloat = 0
-    fileprivate var hasSnappedOut: Bool = false
+    fileprivate var hasSnappedOut: Bool = false{
+        didSet{
+            if hasSnappedOut != oldValue{
+                hapticGenerator.impactOccurred()
+                hapticGenerator.prepare()
+            }
+        }
+    }
     
     fileprivate func constraintForSide(_ side: SwipeSide) -> NSLayoutConstraint?{
         guard activeSide != .none else {return nil}
@@ -359,6 +366,10 @@ extension SwipeAndSnapCell: UIScrollViewDelegate{
         else{
             mutation()
         }
+    }
+    
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        hapticGenerator.prepare()
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
