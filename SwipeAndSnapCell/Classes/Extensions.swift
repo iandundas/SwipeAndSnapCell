@@ -18,7 +18,7 @@ extension UIView{
 }
 
 extension UIView{
-    func constrainToEdgesOf(otherView: UIView, withMargin margin: CGFloat = 0){
+    func constrainToEdgesOf(_ otherView: UIView, withMargin margin: CGFloat = 0){
         translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -37,7 +37,7 @@ extension UIScrollView{
         case right
     }
     
-    func scrollDirection(previousContentOffset: CGFloat) -> TravelDirection{
+    func scrollDirection(_ previousContentOffset: CGFloat) -> TravelDirection{
         if (previousContentOffset > contentOffset.x){
             return .right
         }

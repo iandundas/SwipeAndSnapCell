@@ -27,7 +27,7 @@ An example implementation of the swipe-able cell used in iOS10's Mail.app, where
   s.source           = { :git => 'https://github.com/iandundas/SwipeAndSnapCell.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/id'
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '10.0'
 
   s.source_files = 'SwipeAndSnapCell/Classes/**/*'
 

@@ -1,16 +1,16 @@
 PODS:
-  - SwipeAndSnapCell (0.4.0)
+  - SwipeAndSnapCell (0.5.0)
 
 DEPENDENCIES:
   - SwipeAndSnapCell (from `../`)
 
 EXTERNAL SOURCES:
   SwipeAndSnapCell:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
-  SwipeAndSnapCell: 3aa8e9fd9b65f9bc4f496d081045227bf32c11ea
+  SwipeAndSnapCell: 56b7a4dcdcbb7ce974210d4224000ca3928640f8
 
 PODFILE CHECKSUM: 8ff504d51c170ed4a6b527ef104edcf67b7e8327
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.0.1
