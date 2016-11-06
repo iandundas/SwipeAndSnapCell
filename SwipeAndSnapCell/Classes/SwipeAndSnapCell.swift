@@ -417,7 +417,7 @@ extension SwipeAndSnapCell: UIScrollViewDelegate{
             switch (activeSide, scrollViewDirection) {
                 case (.left, .Right):
                     dispatch_async(dispatch_get_main_queue()) {
-                        scrollView.setContentOffset(CGPoint(x: boxWidth, y: 0), animated: true)
+                        scrollView.setContentOffset(CGPoint(x: self.boxWidth, y: 0), animated: true)
                     }
                 
                 case (.right, .Left):
