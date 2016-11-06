@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SwipeAndSnapCell'
-  s.version          = '0.5.0'
+  s.version          = '0.5.1'
   s.summary          = 'Cell which immitates iOS10\'s Mail.app cell swiping behavior'
 
 # This description is used to generate tags and improve search results.
@@ -27,7 +27,7 @@ An example implementation of the swipe-able cell used in iOS10's Mail.app, where
   s.source           = { :git => 'https://github.com/iandundas/SwipeAndSnapCell.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/id'
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '10.0'
 
   s.source_files = 'SwipeAndSnapCell/Classes/**/*'
 
