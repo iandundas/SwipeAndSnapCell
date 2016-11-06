@@ -116,7 +116,10 @@ public class SwipeAndSnapCell: UITableViewCell{
 
     // MARK: Constants
     
-    static let BoxWidth: CGFloat = 75
+    var boxWidth: CGFloat{
+        return self.frame.height
+    }
+    
     static let DampingAmount: CGFloat = 0.15
     static let SnapAtPercentageWhenHorizontallyCompact: CGFloat = 0.44
     static let SnapAtPercentageWhenHorizontallyRegular: CGFloat = 0.2
@@ -165,7 +168,7 @@ public class SwipeAndSnapCell: UITableViewCell{
     // MARK: State
     
      var restingContentOffset: CGPoint{
-        return CGPoint(x: SwipeAndSnapCell.BoxWidth, y: 0)
+        return CGPoint(x: boxWidth, y: 0)
     }
      var calibratedX: CGFloat{
         return abs(scrollView.contentOffset.x - restingContentOffset.x)
@@ -251,7 +254,7 @@ public class SwipeAndSnapCell: UITableViewCell{
     public override func traitCollectionDidChange(previousTraitCollection: UITraitCollection?){
         super.traitCollectionDidChange(previousTraitCollection)
         
-        scrollView.contentSize = CGSize(width: bounds.width + (SwipeAndSnapCell.BoxWidth * 2), height: scrollView.height)
+        scrollView.contentSize = CGSize(width: bounds.width + (boxWidth * 2), height: scrollView.height)
         scrollView.contentOffset = restingContentOffset
     }
     
@@ -295,7 +298,7 @@ public class SwipeAndSnapCell: UITableViewCell{
             swipeableContentView.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor),
             swipeableContentView.heightAnchor.constraintEqualToAnchor(scrollView.heightAnchor),
             swipeableContentView.topAnchor.constraintEqualToAnchor(scrollView.topAnchor),
-            swipeableContentView.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: SwipeAndSnapCell.BoxWidth)
+            swipeableContentView.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: boxWidth)
             ])
         
         
@@ -306,7 +309,7 @@ public class SwipeAndSnapCell: UITableViewCell{
             leftButtonContainer.heightAnchor.constraintEqualToAnchor(scrollView.heightAnchor),
             leftButtonContainer.topAnchor.constraintEqualToAnchor(scrollView.topAnchor),
             
-            leftButtonContainer.widthAnchor.constraintGreaterThanOrEqualToConstant(SwipeAndSnapCell.BoxWidth),
+            leftButtonContainer.widthAnchor.constraintGreaterThanOrEqualToConstant(boxWidth),
             leftButtonContainer.leftAnchor.constraintLessThanOrEqualToAnchor(scrollView.leftAnchor),
             ])
         
@@ -320,7 +323,7 @@ public class SwipeAndSnapCell: UITableViewCell{
             rightButtonContainer.heightAnchor.constraintEqualToAnchor(scrollView.heightAnchor),
             rightButtonContainer.topAnchor.constraintEqualToAnchor(scrollView.topAnchor),
             
-            rightButtonContainer.widthAnchor.constraintGreaterThanOrEqualToConstant(SwipeAndSnapCell.BoxWidth),
+            rightButtonContainer.widthAnchor.constraintGreaterThanOrEqualToConstant(boxWidth),
             rightButtonContainer.rightAnchor.constraintGreaterThanOrEqualToAnchor(scrollView.rightAnchor),
             ])
         
@@ -330,7 +333,7 @@ public class SwipeAndSnapCell: UITableViewCell{
         setNeedsLayout()
         layoutSubviews()
         
-        scrollView.contentSize = CGSize(width: bounds.width + (SwipeAndSnapCell.BoxWidth * 2), height: scrollView.height)
+        scrollView.contentSize = CGSize(width: bounds.width + (boxWidth * 2), height: scrollView.height)
         scrollView.contentOffset = restingContentOffset
     }
     
@@ -393,10 +396,10 @@ extension SwipeAndSnapCell: UIScrollViewDelegate{
             hasSnappedOut = true
         }
         else{
-            let primaryOffset = min(calibratedX, SwipeAndSnapCell.BoxWidth)
+            let primaryOffset = min(calibratedX, boxWidth)
             let dampedOffset: CGFloat = {
-                if calibratedX > SwipeAndSnapCell.BoxWidth {
-                    let remaining = calibratedX - SwipeAndSnapCell.BoxWidth
+                if calibratedX > boxWidth {
+                    let remaining = calibratedX - boxWidth
                     return remaining * SwipeAndSnapCell.DampingAmount
                 }
                 return 0
@@ -410,16 +413,16 @@ extension SwipeAndSnapCell: UIScrollViewDelegate{
     }
     
     public func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate: Bool){
-        if calibratedX < SwipeAndSnapCell.BoxWidth{
+        if calibratedX < boxWidth{
             switch (activeSide, scrollViewDirection) {
                 case (.left, .Right):
                     dispatch_async(dispatch_get_main_queue()) {
-                        scrollView.setContentOffset(CGPoint(x: SwipeAndSnapCell.BoxWidth, y: 0), animated: true)
+                        scrollView.setContentOffset(CGPoint(x: boxWidth, y: 0), animated: true)
                     }
                 
                 case (.right, .Left):
                     dispatch_async(dispatch_get_main_queue()){
-                        scrollView.setContentOffset(CGPoint(x: self.restingContentOffset.x+SwipeAndSnapCell.BoxWidth, y: 0), animated: true)
+                        scrollView.setContentOffset(CGPoint(x: self.restingContentOffset.x+self.boxWidth, y: 0), animated: true)
                     }
                 
                 default:
