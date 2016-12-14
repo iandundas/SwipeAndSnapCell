@@ -260,6 +260,32 @@ public class SwipeAndSnapCell: UITableViewCell{
     
     // MARK: Resetting:
     
+    public func manuallyBecomeSwiped(side side: SwipeSide) {
+        guard let left = leftButtonContainerRightConstraint, let right = rightButtonContainerLeftConstraint else {return}
+        let timing: NSTimeInterval = 1.5
+        
+        switch side {
+        case .left:
+            UIView.animateWithDuration(timing){
+                self.scrollView.contentOffset = CGPoint(x: 0, y: 0)
+            }
+            
+            mutate(left, constant: boxWidth, withAnimationDuration: timing)
+            mutate(right, constant: 0, withAnimationDuration: timing)
+        
+        case .right:
+            UIView.animateWithDuration(timing){
+                self.scrollView.contentOffset = CGPoint(x: 2*self.boxWidth, y: 0)
+            }
+            mutate(left, constant: 0, withAnimationDuration: timing)
+            mutate(right, constant: boxWidth, withAnimationDuration: timing)
+            break;
+            
+        default:
+            resetPosition()
+        }
+    }
+    
     public func resetPosition(){
         scrollView.setContentOffset(self.restingContentOffset, animated: true)
     }
@@ -286,6 +312,8 @@ public class SwipeAndSnapCell: UITableViewCell{
         addSubview(scrollView)
         scrollView.delegate = self
         scrollView.constrainToEdgesOf(self)
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.showsVerticalScrollIndicator = false
         
         setNeedsLayout()
         layoutSubviews()
@@ -358,18 +386,23 @@ public class SwipeAndSnapCell: UITableViewCell{
 
 extension SwipeAndSnapCell: UIScrollViewDelegate{
     
-    private func mutate(layoutConstraint: NSLayoutConstraint, constant: CGFloat, withAnimation: Bool){
+    private func mutate(layoutConstraint: NSLayoutConstraint, constant: CGFloat, withAnimationDuration duration: NSTimeInterval){
         let mutation = {
             layoutConstraint.constant = constant
             self.layoutIfNeeded()
         }
-        if withAnimation{
-            UIView.animateWithDuration(SwipeAndSnapCell.SnapAnimationDuration, delay: 0, options: .CurveEaseInOut,
+        
+        if duration > 0 {
+            UIView.animateWithDuration(duration, delay: 0, options: .CurveEaseInOut,
                            animations: mutation, completion: nil)
         }
         else{
             mutation()
         }
+    }
+    
+    private func mutate(layoutConstraint: NSLayoutConstraint, constant: CGFloat, withAnimation: Bool){
+        mutate(layoutConstraint, constant: constant, withAnimationDuration: withAnimation ? SwipeAndSnapCell.SnapAnimationDuration : 0)
     }
     
     public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
