@@ -26,7 +26,7 @@ class CellHostedView: UIView {
         label.text = "😊"
         
         addSubview(label)
-        label.constrainToEdgesOf(otherView: self)
+        label.constrainToEdgesOf(self)
     }
     
     required init?(coder aDecoder: NSCoder) {
