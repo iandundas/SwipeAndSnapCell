@@ -1,6 +1,6 @@
 {
   "name": "SwipeAndSnapCell",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "summary": "Cell which immitates iOS10's Mail.app cell swiping behavior",
   "description": "An example implementation of the swipe-able cell used in iOS10's Mail.app, where you can swipe to reveal a button, or swipe fully across to perform the action immediately.",
   "homepage": "https://github.com/iandundas/SwipeAndSnapCell",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/iandundas/SwipeAndSnapCell.git",
-    "tag": "0.5.0"
+    "tag": "0.5.1"
   },
   "social_media_url": "https://twitter.com/id",
   "platforms": {

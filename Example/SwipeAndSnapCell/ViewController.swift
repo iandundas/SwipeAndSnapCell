@@ -26,7 +26,7 @@ class CellHostedView: UIView {
         label.text = "😊"
         
         addSubview(label)
-        label.constrainToEdgesOf(otherView: self)
+        label.constrainToEdgesOf(self)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -111,10 +111,9 @@ class ViewController: UITableViewController {
         tableView.dataSource = tableViewDataSource
         tableView.delegate = tableViewDelegate
         
-        tableViewDataSource.swipedCallback = { [weak self] indexPath, side in
-//            let alert = UIAlertController(title: "Activated!", message: "IndexPath: {\(indexPath.section), \(indexPath.row)}, side: \(side)", preferredStyle: .alert)
-//            alert.addAction(UIAlertAction(title: "ok", style: .default, handler: nil))
-//            self?.present(alert, animated: true, completion: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.1) {
+            guard let cell = self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SwipeAndSnapCell else {return}
+            cell.manuallyBecomeSwiped(side: .none)
         }
     }
 }

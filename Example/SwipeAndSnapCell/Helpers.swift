@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIView{
-    func constrainToEdgesOf(otherView: UIView, withMargin margin: CGFloat = 0){
+    func constrainToEdgesOf(_ otherView: UIView, withMargin margin: CGFloat = 0){
         translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
