@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/SwipeAndSnapCell.svg?style=flat)](http://cocoapods.org/pods/SwipeAndSnapCell)
 [![Platform](https://img.shields.io/cocoapods/p/SwipeAndSnapCell.svg?style=flat)](http://cocoapods.org/pods/SwipeAndSnapCell)
 
-An example implementation of the swipe-able cell used in iOS10's Mail.app, where you can swipe to reveal a button, or swipe fully across to perform the action immediately.
+An example implementation of the swipe-able cell used in iOS10's Mail.app, where you can swipe to reveal a button, or swipe fully across to perform the action immediately. Supports haptic feedback on iPhone 7.
 
 I hope it's useful to somebody, I'll be using it in v2.0 of [Tacks](http://www.tacks.cc).
 
